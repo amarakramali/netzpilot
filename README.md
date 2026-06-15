@@ -2,7 +2,7 @@
 
 **Leakage-sichere Last-, Erzeugungs- und Residuallastprognose für kleine deutsche Stadtwerke — mit §14a-EnWG-Steuerung, Bilanzkreis-Ökonomie und operativem Cockpit.**
 
-> ⚠️ **Proprietäres Projekt — alle Rechte vorbehalten.** Siehe [LICENSE](LICENSE): öffentlich einsehbar (source-available), aber keine Nutzung ohne ausdrückliche Genehmigung.
+> **Lizenz: GNU AGPL-3.0** (Open Source, Copyleft) — siehe [LICENSE](LICENSE). Eine **kommerzielle Lizenz** ohne AGPL-Pflichten ist auf Anfrage erhältlich, siehe [LICENSING.md](LICENSING.md).
 
 ---
 
@@ -77,4 +77,4 @@ prognose_engine_v1/   eingefrorenes v1-Beispiel (mit Beispieldaten für die Test
 
 ## Lizenz
 
-Proprietär — alle Rechte vorbehalten, siehe [LICENSE](LICENSE). Das Repository ist öffentlich einsehbar (source-available); das Klonen oder Einsehen begründet jedoch keinerlei Nutzungs- oder Verwertungsrechte. Für Lizenz-, Pilot- oder Kooperationsanfragen den Rechteinhaber kontaktieren.
+NetzPilot steht unter der **GNU AGPL-3.0** (siehe [LICENSE](LICENSE)): du darfst es nutzen, studieren, ändern und weitergeben, musst abgeleitete Werke (auch als Netzwerk-/SaaS-Dienst, AGPL § 13) aber ebenfalls unter der AGPL-3.0 offenlegen. Für eine Nutzung **ohne** AGPL-Pflichten gibt es eine **kommerzielle Zweitlizenz** — Details in [LICENSING.md](LICENSING.md). © 2026 Amar Akram.
