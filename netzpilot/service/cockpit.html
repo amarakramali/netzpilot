@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetzPilot — Operatives Cockpit</title>
+<style>
+  :root{
+    --bg:#0b1220;--bg2:#0e1626;--panel:#121c2f;--panel2:#16213a;--ink:#e8eff9;--muted:#8da0b9;
+    --line:#1e2c47;--line2:#27395c;--accent:#4cc2ff;--good:#3ddc97;--warn:#ffb454;--bad:#ff6b7a;
+    --purple:#a78bfa;--band:rgba(76,194,255,.16);--shadow:0 10px 30px rgba(0,0,0,.35);
+    --mono:ui-monospace,"Cascadia Mono",Consolas,Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+  [data-theme="light"]{
+    --bg:#f3f6fb;--bg2:#eef2f8;--panel:#ffffff;--panel2:#f6f9fd;--ink:#16202e;--muted:#64748b;
+    --line:#dde5f0;--line2:#c9d6e8;--accent:#0e7fc1;--good:#0f8f63;--warn:#b97816;--bad:#c2453f;
+    --purple:#6957b8;--band:rgba(14,127,193,.12);--shadow:0 8px 24px rgba(22,32,46,.08)}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.42}
+  ::selection{background:var(--accent);color:#04121f}
+
+  header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 20px;
+    background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.2px}
+  .brand .logo{width:28px;height:28px}
+  .brand b{color:var(--accent)}
+  .sub{font-size:12px;color:var(--muted)}
+  .hspacer{margin-left:auto}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line2);
+    border-radius:999px;padding:4px 10px;color:var(--muted);background:var(--panel)}
+  .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+  .pill.ok .dot{background:var(--good)} .pill.bad .dot{background:var(--bad)}
+  .iconbtn{border:1px solid var(--line2);background:var(--panel);color:var(--ink);border-radius:8px;
+    padding:6px 10px;font-size:12px;cursor:pointer}
+  .iconbtn:hover{border-color:var(--accent)}
+
+  main{display:grid;grid-template-columns:330px 1fr;min-height:calc(100vh - 53px)}
+  aside{border-right:1px solid var(--line);background:var(--bg2);padding:14px;overflow:auto}
+  section{padding:18px 22px 48px;overflow:auto}
+
+  details{border:1px solid var(--line);border-radius:10px;background:var(--panel);margin-bottom:10px;overflow:hidden}
+  details>summary{cursor:pointer;list-style:none;padding:10px 12px;font-size:11px;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+  details>summary::before{content:"";width:6px;height:6px;border-right:2px solid var(--muted);
+    border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s}
+  details[open]>summary::before{transform:rotate(45deg)}
+  details>div{padding:2px 12px 12px}
+  label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);margin:8px 0}
+  input,select,textarea{width:100%;border:1px solid var(--line2);background:var(--bg);color:var(--ink);
+    border-radius:8px;padding:8px 9px;font:13px var(--sans)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{min-height:84px;font-family:var(--mono);resize:vertical}
+  .row{display:flex;gap:8px}.row>*{flex:1}
+  .checkbox{flex-direction:row;align-items:center;gap:8px;color:var(--ink)}
+  .checkbox input{width:auto}
+  button.primary{width:100%;border:0;border-radius:10px;padding:11px 12px;margin-top:6px;cursor:pointer;
+    font-weight:800;font-size:14px;color:#04121f;background:linear-gradient(135deg,var(--accent),#7fd6ff)}
+  button.primary:hover{filter:brightness(1.07)}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 2px}
+  .actions button{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:8px;
+    padding:8px;cursor:pointer;font-size:12.5px}
+  .error{white-space:pre-wrap;color:var(--bad);font-family:var(--mono);font-size:12px;margin-top:8px}
+  #hist .chip{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:10px;
+    padding:2px 8px;margin:2px 4px 2px 0;cursor:pointer;font-size:11px}
+  #hist .chip:hover{border-color:var(--accent)}
+
+  .kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:14px}
+  .kpi{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+  .kpi .v{font-size:21px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.2px}
+  .kpi .l{font-size:10.5px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.07em}
+  .ok{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)} .muted{color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .panel h3{margin:0 0 10px;font-size:13px;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+  .panel h3::before{content:"";width:4px;height:14px;border-radius:2px;background:var(--accent)}
+  .wide{grid-column:span 6}.half{grid-column:span 3}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:0}
+  .kv th{width:42%;font-size:11px;text-transform:none;letter-spacing:0}
+  .badge{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px}
+  .badge.ok{background:rgba(61,220,151,.14);color:var(--good)}
+  .badge.bad{background:rgba(255,107,122,.14);color:var(--bad)}
+  .badge.dim{background:var(--panel2);color:var(--muted)}
+  .badge.warn{background:rgba(255,180,84,.16);color:var(--warn)}
+  .note{font-size:12px;color:var(--muted);border-left:3px solid var(--line2);padding:6px 10px;margin:8px 0 0;background:var(--panel2);border-radius:0 8px 8px 0}
+  .horizonBlock{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+  .horizonTitle{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin:6px 0 2px}
+  .legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .strip{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;margin:8px 0 2px}
+  .cell{height:26px;border-radius:5px;background:var(--panel2);border:1px solid var(--line);
+    display:flex;align-items:flex-end;justify-content:center;font-size:8.5px;color:var(--muted);overflow:hidden}
+  .minibars{display:flex;align-items:flex-end;gap:2px;height:54px;margin:6px 0}
+  .minibars i{flex:1;background:var(--accent);opacity:.65;border-radius:2px 2px 0 0;min-height:2px}
+  svg{display:block;width:100%;height:auto}
+  svg text{font-family:var(--sans)}
+  .tooltip{position:fixed;pointer-events:none;z-index:99;background:var(--panel2);border:1px solid var(--line2);
+    border-radius:10px;padding:8px 11px;font-size:12px;box-shadow:var(--shadow);display:none;min-width:150px}
+  .tooltip b{font-variant-numeric:tabular-nums}
+  footer{margin-top:18px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+
+  @media(max-width:1280px){.kpis{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:1100px){main{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line)}
+    .half{grid-column:span 6}}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media print{aside,header .iconbtn,header .pill{display:none}body{background:#fff;color:#000}
+    .panel,.kpi{box-shadow:none;border-color:#bbb}main{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 28 28" aria-hidden="true">
+      <rect x="1" y="1" width="26" height="26" rx="6" fill="none" stroke="var(--accent)" stroke-width="2"/>
+      <path d="M6 18 L11 11 L15 15 L22 7" fill="none" stroke="var(--good)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M16 21 l3 -5 h-2 l1 -4 -3 5 h2 z" fill="var(--warn)"/>
+    </svg>
+    Netz<b>Pilot</b> <span class="sub" style="font-weight:400">Operatives Cockpit</span>
+  </div>
+  <div class="sub">Prognose · §14a · Netzrisiko · € · Track-Record — ausschließlich echte Service-Daten</div>
+  <div class="hspacer"></div>
+  <span id="health" class="pill"><span class="dot"></span><span>Backend prüfen…</span></span>
+  <button id="themeBtn" class="iconbtn" title="Hell/Dunkel">◐ Theme</button>
+  <button class="iconbtn" onclick="window.print()" title="Drucken/PDF">⎙ Drucken</button>
+</header>
+<main>
+<aside>
+  <details open><summary>Daten laden</summary><div>
+    <label>Mandant für „Latest“ (Vorschläge aus dem Store)<input id="utility" list="utilList" value="Mein Stadtwerk"></label>
+    <datalist id="utilList"></datalist>
+    <div class="actions"><button id="loadLatest">Latest laden</button><button id="clear">Leeren</button><button id="saveJson">JSON speichern</button></div>
+    <label>Oder Ergebnis-JSON laden (z.&nbsp;B. latest.json aus data_cache/service_store/&lt;Mandant&gt;/)<input id="jsonFile" type="file" accept=".json,application/json"></label>
+    <label>Intraday-Update<input id="idActuals" placeholder="bisherige Ist-Stunden heute, MW: 21.0,22.5,..."></label>
+    <div class="actions"><button id="runIntraday">Intraday rechnen</button></div>
+    <div id="hist"></div>
+  </div></details>
+
+  <details open><summary>Live-Lauf</summary><div>
+    <label>Server-Datei wählen (data_cache/real)<select id="csvPick"><option value="">— bitte wählen —</option></select></label>
+    <label>CSV-Pfad (wird von der Auswahl oben gefüllt)<input id="csvPath" value="data_cache/real/Netzumsatz-Lastgang-2025.csv"></label>
+    <label>… oder eigene Datei hochladen (CSV/Excel/MSCONS — hat Vorrang)<input id="csvFile" type="file" accept=".csv,.xlsx,.xls,.xlsm,.mscons,.edi,.txt"></label>
+    <div class="row">
+      <label>Einheit<select id="unit"><option>MW</option><option selected>kW</option><option>W</option></select></label>
+      <label>Bundesland (Feiertage)<select id="region">
+        <option value="BW">BW</option><option value="BY">BY</option><option value="BE">BE</option>
+        <option value="BB">BB</option><option value="HB">HB</option><option value="HH">HH</option>
+        <option value="HE">HE</option><option value="MV">MV</option><option value="NI">NI</option>
+        <option value="NW" selected>NW</option><option value="RP">RP</option><option value="SL">SL</option>
+        <option value="SN">SN</option><option value="ST">ST</option><option value="SH">SH</option>
+        <option value="TH">TH</option></select></label>
+    </div>
+    <div class="row">
+      <label>Zeitspalte<input id="tsCol" value="Text"></label>
+      <label>Lastspalte<input id="loadCol" value="Reihe1"></label>
+    </div>
+    <label>Eine Rating-Wahrheit, kW<input id="ratingKw" type="number" value="33000" step="1"></label>
+    <label class="checkbox"><input id="thermal" type="checkbox" checked> Thermik mit Rating rechnen</label>
+    <label class="checkbox"><input id="drift" type="checkbox"> Drift-Monitoring</label>
+    <label>Forecast-Store (Hash-Kette)<input id="forecastStore" placeholder="data_cache/forecast_store/&lt;mandant&gt;.jsonl"></label>
+    <label>Residual-Feedback<select id="residualFeedback"><option value="">auto (Store-getrieben)</option><option value="true">an (auch ohne Store)</option><option value="false">aus (Logging-only)</option></select></label>
+    <div class="row">
+      <label>Horizont<select id="horizonDays"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select></label>
+      <label>Horizont-Baender<select id="horizonBands"><option value="k1" selected>aus</option><option value="per_horizon">kalibriert</option></select></label>
+    </div>
+    <label>Als Feiertag behandeln (Datumsliste)<input id="holAdd" placeholder="z. B. 2026-05-15 (Brückentag), 2026-12-24"></label>
+    <label>NICHT als Feiertag behandeln<input id="holRemove" placeholder="Kalender-Korrektur, ISO-Daten"></label>
+    <div class="muted" style="font-size:11px;margin:-2px 0 4px">Explizit statt geraten: markierte Tage fließen in Feiertags-Merkmal <i>und</i> Vorwochen-Anker. „Wie Feiertag" ist Ihre Annahme — gemessen belegt ist das Verhalten echter Feiertage.</div>
+  </div></details>
+
+  <details><summary>§14a &amp; Pool</summary><div>
+    <label>steuVE-Demands kW<input id="steuveDemands" value="1000,800,600"></label>
+    <label class="checkbox"><input id="dispatch" type="checkbox" checked> Quantil-Dispatch rechnen</label>
+    <label class="checkbox"><input id="tariff" type="checkbox" checked> Modul-3-Profil rechnen</label>
+    <label>Pool-Assets JSON<textarea id="poolAssets">[
+  {"id":"WP-1","demand_kw":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],"floor_kw":4.2},
+  {"id":"WB-1","demand_kw":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],"floor_kw":4.2},
+  {"id":"BAT-1","demand_kw":[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],"floor_kw":4.2}
+]</textarea></label>
+    <label>Pool-Cap kW, Kommaliste<input id="poolCap" value="40,40,40,40,40,40,40,40,40,40,40,40,24,40,40,40,40,40,40,40,40,40,40,40"></label>
+  </div></details>
+
+  <details><summary>Ökonomie</summary><div>
+    <label>MMM-Preis EUR/MWh<input id="mmmPrice" type="number" value="60" step="0.1"></label>
+    <label>reBAP CSV<input id="rebapCsv" value="data_cache/real/rebap_2024.csv"></label>
+    <label>Spot CSV<input id="spotCsv" value="data_cache/real/spot_da_2024.csv"></label>
+  </div></details>
+
+  <button id="runLive" class="primary">▶ Live-Lauf starten</button>
+
+  <details open><summary>Blind-Challenge</summary><div>
+    <div class="muted" style="font-size:11.5px;margin:4px 0 6px">Der Sofort-Beweis auf fremden Daten:
+      nutzt Datei/Pfad &amp; Spalten von oben und rechnet den leakage-sicheren Backtest mit
+      Signifikanz — ohne etwas zu speichern.</div>
+    <label>Testtage (Backtest-Fenster)<input id="chDays" type="number" value="84" min="28" step="7"></label>
+    <button id="runChallenge" class="primary" style="background:linear-gradient(135deg,var(--warn),#ffd28f)">⚡ Challenge rechnen</button>
+  </div></details>
+
+  <div id="error" class="error"></div>
+</aside>
+
+<section>
+  <div class="kpis">
+    <div class="kpi"><div id="kDate" class="v">–</div><div class="l">Prognosetag</div></div>
+    <div class="kpi"><div id="kPeak" class="v">–</div><div class="l">Peak P50</div></div>
+    <div class="kpi"><div id="kRating" class="v">–</div><div class="l">Rating-Wahrheit</div></div>
+    <div class="kpi"><div id="kCong" class="v">–</div><div class="l">§14a-Engpass</div></div>
+    <div class="kpi"><div id="kDrift" class="v">–</div><div class="l">Drift</div></div>
+    <div class="kpi"><div id="kQuality" class="v">–</div><div class="l">Datenqualität</div></div>
+    <div class="kpi"><div id="kChain" class="v">–</div><div class="l">Track-Record-Kette</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="panel wide">
+      <h3>Day-ahead-Prognose <span id="chartSub" class="muted" style="font-weight:400;font-size:11.5px"></span></h3>
+      <div class="legend">
+        <span><i style="background:var(--band);height:10px;border:1px solid var(--accent)"></i>P10–P90-Band</span>
+        <span><i style="background:var(--good)"></i>P50</span>
+        <span><i style="background:var(--warn)"></i>Intraday P50</span>
+        <span><i style="background:var(--purple)"></i>Residuallast P50</span>
+        <span><i style="background:var(--bad);height:2px"></i>Rating</span>
+        <span><i style="background:var(--warn);opacity:.5;height:10px"></i>Engpassfenster</span>
+      </div>
+      <div id="chart"></div>
+      <div id="intraday"></div>
+      <div id="horizon"></div>
+    </div>
+
+    <div class="panel wide" id="challenge"></div>
+
+    <div class="panel half"><h3>§14a &amp; Dispatch</h3><div id="ctlStrip"></div><div id="control"></div></div>
+    <div class="panel half"><h3>Netz &amp; Thermik</h3><div id="gridRisk"></div></div>
+    <div class="panel half"><h3>€ &amp; Mehr-/Mindermengen</h3><div id="money"></div></div>
+    <div class="panel half"><h3>Pool-Dispatch</h3><div id="pool"></div></div>
+
+    <div class="panel wide"><h3>Live-Track-Record <span id="tBadge" class="badge dim">–</span></h3><div id="track"></div></div>
+    <div class="panel wide"><h3>Caveats &amp; Annahmen</h3><div id="caveats"></div></div>
+  </div>
+
+  <footer>NetzPilot zeigt ausschließlich Felder aus dem echten Service-JSON — keine Kennzahl ohne Quelle.
+  §14a-Fahrpläne sind <b>Entwürfe</b> für einen zertifizierten aEMT. P10/P50/P90 sind kalibrierte Quantile.</footer>
+</section>
+</main>
+<div id="tip" class="tooltip"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const n=(v,d=1)=>v==null||isNaN(v)?'–':Number(v).toFixed(d);
+const eur=v=>v==null||isNaN(v)?'–':Math.round(v).toLocaleString('de-DE')+' €';
+
+/* Theme */
+$('themeBtn').onclick=()=>{const h=document.documentElement;
+  h.dataset.theme=h.dataset.theme==='dark'?'light':'dark';if(LAST)render(LAST);};
+
+/* Backend health — mit klarer Ursache statt Generik */
+fetch('/health').then(r=>r.json()).then(j=>{$('health').className='pill ok';
+  $('health').lastElementChild.textContent='Backend ok · v'+j.version;})
+ .catch(()=>{$('health').className='pill bad';
+  $('health').lastElementChild.textContent=healthFailText(location.protocol);});
+function healthFailText(proto){return proto==='file:'
+  ?'Als Datei geöffnet — bitte über http://127.0.0.1:8000/cockpit aufrufen'
+  :'Backend nicht erreichbar — Server starten (Start_NetzPilot.bat)'}
+
+/* Mandanten-Vorschläge aus dem Service-Store (graceful: offline → leer) */
+function utilityOptionsHtml(names){return (names||[]).map(u=>'<option value="'+esc(u)+'"></option>').join('')}
+fetch('/utilities').then(r=>r.json()).then(j=>{
+  $('utilList').innerHTML=utilityOptionsHtml(j.utilities||j||[])}).catch(()=>{});
+
+/* Server-Dateiauswahl: Lastgänge aus data_cache/real (der Browser darf den Startordner des
+   nativen Datei-Dialogs nicht setzen — das hier ist der Ein-Klick-Ersatz). */
+function fileOptionsHtml(names){return '<option value="">— bitte wählen —</option>'+
+  (names||[]).map(f=>'<option value="'+esc(f)+'">'+esc(f)+'</option>').join('')}
+fetch('/files').then(r=>r.json()).then(j=>{const el=$('csvPick');
+  el.innerHTML=fileOptionsHtml(j.files||[]);
+  el.onchange=()=>{if(el.value)$('csvPath').value=(j.dir||'data_cache/real')+'/'+el.value}}).catch(()=>{});
+
+/* Laden / Live-Lauf (Daten-Vertrag unverändert) */
+let LAST=null;
+$('clear').onclick=()=>{render(null);$('hist').innerHTML=''};
+$('loadLatest').onclick=async()=>{try{
+  const r=await fetch('/forecast/'+encodeURIComponent($('utility').value)+'/latest');
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.status);render(j);refreshHistory()}catch(e){err(e)}};
+/* Verlauf: gespeicherte Prognosetage des Mandanten als klickbare Chips (GET /history + /forecast/<u>/<datum>) */
+function historyChipsHtml(dates,total){if(!dates||!dates.length)return '';
+  return '<div class="muted" style="font-size:11px;margin:6px 0 4px">Verlauf — '+total+' gespeicherte Tage, jüngste zuerst</div>'+
+    dates.map(d=>'<button class="chip" data-d="'+esc(d)+'">'+esc(d)+'</button>').join('')}
+async function refreshHistory(){const u=$('utility').value,el=$('hist');
+  try{const r=await fetch('/history/'+encodeURIComponent(u));const j=await r.json();
+    const all=j.dates||[];el.innerHTML=historyChipsHtml(all.slice(-14).reverse(),all.length);
+    el.querySelectorAll('button.chip').forEach(b=>{b.onclick=()=>loadDate(u,b.dataset.d)})
+  }catch(_){el.innerHTML=''}}
+async function loadDate(u,d){try{
+  const r=await fetch('/forecast/'+encodeURIComponent(u)+'/'+encodeURIComponent(d));
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.status);render(j)}catch(e){err(e)}};
+$('jsonFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{render(resultFromJson(await f.text(),f.name))}catch(x){err(x)}e.target.value=''};
+function resultFromJson(text,name){let j;
+  try{j=JSON.parse(text)}catch(_){throw new Error((name||'Datei')+': kein gültiges JSON.')}
+  if(j&&Array.isArray(j.forecast)&&j.forecast.length&&j.forecast[0]&&j.forecast[0].p50!==undefined)return j;
+  throw new Error((name||'Datei')+': kein NetzPilot-Ergebnis-JSON — erwartet wird das Ergebnis eines Prognose-Laufs '+
+    '(Feld "forecast" als Stundenliste mit p10/p50/p90). Gültige Dateien: data_cache/service_store/<Mandant>/latest.json '+
+    'bzw. <Datum>.json, oder hier über „JSON speichern“ erzeugte Dateien. Eval-/Benchmark-JSONs (results.json u. ä.) sind keine Ergebnisse.')}
+$('saveJson').onclick=()=>{if(!LAST){err(new Error('Nichts zu speichern — erst eine Prognose laden oder rechnen.'));return}
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(LAST,null,2)],{type:'application/json'}));
+  a.download='netzpilot_'+String(LAST.utility||'ergebnis').replace(/[^\wäöüÄÖÜß-]+/g,'_')+'_'+(LAST.forecast_date||'')+'.json';
+  a.click();URL.revokeObjectURL(a.href)};
+$('runLive').onclick=async()=>{try{
+  const fd=new FormData();
+  const lf=$('csvFile').files&&$('csvFile').files[0];
+  if(lf)fd.append('file',lf);else fd.append('csv_path',$('csvPath').value);
+  fd.append('utility',$('utility').value);
+  fd.append('unit',$('unit').value);fd.append('region',$('region').value);
+  fd.append('ts_col',$('tsCol').value);fd.append('load_col',$('loadCol').value);
+  const rating=$('ratingKw').value;
+  if(rating){fd.append('rating_kw',rating);if($('thermal').checked)fd.append('thermal_rating_kw',rating)}
+  fd.append('rolling_redispatch','true');fd.append('steuve_malo','DE-DEMO-0000000000001');
+  fd.append('steuve_demands_kw',$('steuveDemands').value);
+  fd.append('rebap_csv',$('rebapCsv').value);fd.append('spot_csv',$('spotCsv').value);
+  fd.append('realized_economics','true');
+  if($('drift').checked)fd.append('drift_monitoring','true');
+  if($('mmmPrice').value)fd.append('mmm_price_eur_mwh',$('mmmPrice').value);
+  if($('dispatch').checked){fd.append('dispatch_plan_enabled','true');fd.append('dispatch_steuve_energy_kwh','40');
+    fd.append('dispatch_steuve_p_max_kw','1000');fd.append('dispatch_risk_beta','0.6')}
+  if($('tariff').checked){fd.append('grid_fee_eur_per_kwh','0.05,0.05,0.05,0.05,0.05,0.05,0.20,0.20,0.20,0.20,0.20,0.20,0.20,0.20,0.20,0.20,0.20,0.20,0.35,0.35,0.35,0.20,0.05,0.05');
+    fd.append('tariff_energy_kwh','40');fd.append('tariff_p_max_kw','11')}
+  if($('poolAssets').value.trim()){fd.append('pool_assets',$('poolAssets').value);fd.append('pool_shared_cap_kw',$('poolCap').value)}
+  if($('forecastStore').value.trim()){fd.append('forecast_store_path',$('forecastStore').value.trim())}
+  if($('residualFeedback').value){fd.append('residual_feedback',$('residualFeedback').value)}
+  fd.append('horizon_days',$('horizonDays').value||'1');
+  fd.append('horizon_bands',$('horizonBands').value||'k1');
+  if($('holAdd').value.trim())fd.append('holiday_add',$('holAdd').value.trim());
+  if($('holRemove').value.trim())fd.append('holiday_remove',$('holRemove').value.trim());
+  const r=await fetch('/forecast',{method:'POST',body:fd});
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.status);render(j);refreshHistory()}catch(e){err(e)}};
+$('runIntraday').onclick=async()=>{try{
+  const fd=new FormData();
+  fd.append('utility',$('utility').value);
+  fd.append('actuals',$('idActuals').value);
+  const r=await fetch('/intraday',{method:'POST',body:fd});
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.status);
+  if(LAST&&Array.isArray(LAST.forecast)){LAST={...LAST,intraday:j};render(LAST)}
+  else{$('intraday').innerHTML='<div class="note">'+esc(j.caveat||j.reason||'Intraday berechnet; Latest laden, um die Linie im Chart zu sehen.')+'</div>'}
+}catch(e){err(e)}};
+function err(e){const m=e.message||String(e);
+  $('error').textContent=m==='Not Found'
+    ?'Endpoint nicht gefunden — der Server läuft vermutlich noch in einer älteren Version. Bitte das Server-Fenster schließen und Start_NetzPilot.bat neu starten.'
+    :m}
+
+/* Blind-Challenge: leakage-sicherer Backtest + Signifikanz auf der gewählten Datei (POST /challenge) */
+$('runChallenge').onclick=async()=>{try{
+  const fd=new FormData();
+  const lf=$('csvFile').files&&$('csvFile').files[0];
+  if(lf)fd.append('file',lf);else fd.append('csv_path',$('csvPath').value);
+  fd.append('unit',$('unit').value);fd.append('region',$('region').value);
+  fd.append('ts_col',$('tsCol').value);fd.append('load_col',$('loadCol').value);
+  fd.append('n_test',$('chDays').value||'84');
+  $('challenge').innerHTML='<h3>Blind-Challenge</h3><div class="muted">rechnet — leakage-sicherer Backtest über '+esc($('chDays').value||'84')+' Tage…</div>';
+  const r=await fetch('/challenge',{method:'POST',body:fd});
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||r.status);renderChallenge(j)}
+  catch(e){$('challenge').innerHTML='';err(e)}};
+function challengeVerdictHtml(c){const sn=c.vs_snaive||{};const sig=!!sn.significant_5pct;
+  return '<div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:2px 0 8px">'+
+    '<div style="font-size:30px;font-weight:800" class="'+((sn.skill_pct||0)>0?'ok':'bad')+'">'+
+    ((sn.skill_pct||0)>0?'+':'')+n(sn.skill_pct,1)+' %</div>'+
+    '<div>genauer als Saisonal-Naiv (Branchenpraxis) · CI95 ['+n((sn.ci95||[])[0],1)+', '+n((sn.ci95||[])[1],1)+'] '+
+    '<span class="badge '+(sig?'ok':'dim')+'">'+(sig?'signifikant (5 %)':'nicht signifikant')+'</span></div></div>'}
+function renderChallenge(c){if(!c){$('challenge').innerHTML='';return}
+  const sn=c.vs_snaive||{},pe=c.vs_persist||{};
+  $('challenge').innerHTML='<h3>Blind-Challenge — '+esc(c.source_file||'Datei')+'</h3>'+
+   challengeVerdictHtml(c)+
+   kv([
+    ['Datenbasis',esc(String(c.n_days_history))+' Tage Historie · Testfenster '+esc(String(c.n_test))+' Tage · ⌀ Last '+esc(n(c.mean_load_mw,1))+' MW'],
+    ['MAE (MW)','NetzPilot <b>'+n(c.mae_model_mw,2)+'</b> · Saisonal-Naiv '+n(c.mae_snaive_mw,2)+' · Persistenz '+n(c.mae_persist_mw,2)],
+    ['MAPE',c.mape_pct!=null?esc(n(c.mape_pct,2))+' %':esc(c.mape_note||'–')],
+    ['P(Modell besser) / Tage gewonnen',esc(n(sn.p_model_better_pct,1))+' % / '+esc(n(sn.days_won_pct,1))+' %'],
+    ['vs. Persistenz (Vortag)',esc(n(pe.skill_pct,1))+' % '+badge(!!pe.significant_5pct)]])+
+   '<div class="note">'+esc(c.method||'')+' — jede Prognose nutzt nur Daten VOR dem Zieltag. Ergebnis gilt für diese Reihe und diesen Zeitraum.</div>'}
+
+/* ---------- Render ---------- */
+function render(b){LAST=b;$('error').textContent='';
+  if(!b){['kDate','kPeak','kRating','kCong','kDrift','kQuality','kChain'].forEach(id=>{$(id).textContent='–';$(id).className='v'});
+    ['chart','intraday','horizon','ctlStrip','control','gridRisk','money','pool','track','caveats','challenge'].forEach(id=>$(id).innerHTML='');
+    $('chartSub').textContent='';$('tBadge').textContent='–';$('tBadge').className='badge dim';return}
+  $('kDate').textContent=b.forecast_date||'–';
+  const fc=Array.isArray(b.forecast)?b.forecast:[];
+  const peak=Math.max(...(fc.length?fc:[{p50:NaN}]).map(h=>h.p50));
+  $('kPeak').textContent=isFinite(peak)?n(peak,1)+' MW':'–';
+  $('kRating').textContent=b.asset_limit?n(b.asset_limit.rating_kw,0)+' kW':'–';
+  $('kCong').textContent=b.congestion?'JA':'nein';$('kCong').className='v '+(b.congestion?'warn':'ok');
+  $('kDrift').textContent=b.drift?(b.drift.status||'aktiv'):'aus';
+  $('kDrift').className='v '+(b.drift&&b.drift.needs_recalibration?'warn':'');
+  const val=b.input_validation;
+  $('kQuality').textContent=val&&val.enabled?n((val.quality_score||0)*100,1)+' %':'–';
+  const tr=b.track_record;
+  $('kChain').textContent=tr?(tr.chain_ok?'✓ intakt':'✗ Bruch'):'aus';
+  $('kChain').className='v '+(tr?(tr.chain_ok?'ok':'bad'):'muted');
+  $('chartSub').textContent=(b.utility?b.utility+' · ':'')+(b.unit||'MW')
+    +(b.residual_feedback?' · Residuen-Feedback ρ aktiv':'');
+  drawChart(b);renderIntraday(b);renderHorizon(b);renderStrip(b);renderControl(b);renderGrid(b);renderMoney(b);renderPool(b);renderTrack(b);renderCaveats(b)}
+
+function renderIntraday(b){const u=b&&b.intraday,el=$('intraday');
+  if(!u){el.innerHTML='';return}
+  if(u.applied){
+    const delta=(u.delta_mw>=0?'+':'')+n(u.delta_mw,1).replace('.',',');
+    el.innerHTML='<div class="note"><span class="badge warn">Intraday δ='+esc(delta)+' MW (ab h='+esc(u.update_hour)+')</span> '+
+      esc(u.caveat||'')+'</div>';
+  }else{
+    el.innerHTML='<div class="note"><span class="muted">'+esc(u.reason||'Intraday nicht angewendet')+'</span> '+
+      esc(u.caveat||'')+'</div>';
+  }}
+
+function renderHorizon(b){const hz=b&&b.horizon,el=$('horizon');
+  const days=hz&&Array.isArray(hz.days)?hz.days.filter(d=>Number(d.horizon)>=2):[];
+  if(!days.length){el.innerHTML='';return}
+  const mode=hz.bands_mode||'k1';
+  const rows=days.map(d=>{
+    const hours=Array.isArray(d.hours)?d.hours:[];
+    const vals=hours.map(h=>Number(h.p50)).filter(v=>isFinite(v));
+    const peak=vals.length?Math.max(...vals):NaN;
+    const energy=vals.reduce((s,v)=>s+v,0);
+    const onlyP50=hours.every(h=>h.p50!==undefined&&h.p10===undefined&&h.p90===undefined);
+    const peakIdx=hours.reduce((best,h,i)=>Number(h.p50)>Number((hours[best]||{}).p50)?i:best,0);
+    const ph=hours[peakIdx]||{};
+    const hasBand=hours.length&&hours.every(h=>h.p50!==undefined&&h.p10!==undefined&&h.p90!==undefined);
+    const bandCell=hasBand&&mode==='per_horizon'
+      ? `${n(ph.p10,1)}-${n(ph.p90,1)} MW <span class="badge dim">s=${n(d.band&&d.band.scale,2)}</span>`
+      : (onlyP50?'<span class="badge dim">nur P50</span>':'<span class="badge bad">Band-Felder</span>');
+    return `<tr><td>D+${esc(d.horizon)}</td><td>${esc(d.date||'')}</td><td class="num">${n(peak,1)} MW</td><td class="num">${n(energy,1)} MWh</td><td>${bandCell}</td></tr>`}).join('');
+  el.innerHTML='<div class="horizonBlock"><div class="horizonTitle">D+2 / D+3 (P50)</div>'+
+    '<table><thead><tr><th>Horizont</th><th>Datum</th><th class="num">Peak P50</th><th class="num">Tagesenergie</th><th>P10-P90 (Peakstunde)</th></tr></thead><tbody>'+
+    rows+'</tbody></table><div class="muted" style="font-size:11.5px;margin-top:5px">'+
+    esc(hz.bands||hz.bands_note||hz.note||'')+'</div></div>'}
+
+/* ---------- Hero-Chart: Band + P50 + Residual + Rating + Engpass + Hover ---------- */
+let CH=null;
+function drawChart(b){const hours=Array.isArray(b.forecast)?b.forecast:[];const el=$('chart');
+  if(!hours.length){el.innerHTML='<div class="muted">kein Forecast geladen</div>';CH=null;return}
+  const resid=(b.residual_forecast&&Array.isArray(b.residual_forecast.forecast))?b.residual_forecast.forecast:null;
+  const intr=(b.intraday&&b.intraday.applied&&Array.isArray(b.intraday.hours_rest))?b.intraday.hours_rest:null;
+  const ratingMw=b.asset_limit?b.asset_limit.rating_kw/1000:null;
+  const W=980,H=320,p={l:56,r:14,t:14,b:30};
+  const p10=hours.map(h=>h.p10),p50=hours.map(h=>h.p50),p90=hours.map(h=>h.p90);
+  let vals=p10.concat(p90);if(resid)vals=vals.concat(resid.map(h=>h.p50));
+  if(intr)vals=vals.concat(intr.map(h=>h.p50));
+  if(ratingMw&&ratingMw<Math.max(...p90)*1.6)vals=vals.concat([ratingMw]);
+  const lo=Math.min(...vals),hi=Math.max(...vals),pad=(hi-lo||1)*.07;
+  const y0=lo-pad,y1=hi+pad,rng=y1-y0;
+  const X=i=>p.l+(W-p.l-p.r)*i/23, Y=v=>p.t+(H-p.t-p.b)*(1-(v-y0)/rng);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');
+  const pathHours=a=>a.map((h,i)=>(i?'L':'M')+X(Number(h.hour)).toFixed(1)+' '+Y(Number(h.p50)).toFixed(1)).join(' ');
+  /* y-Gitter: 5 runde Linien */
+  let grid='',step=niceStep(rng/4);
+  for(let v=Math.ceil(y0/step)*step;v<=y1+1e-9;v+=step){
+    grid+=`<line x1="${p.l}" x2="${W-p.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/>`+
+          `<text x="${p.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="10.5" fill="var(--muted)">${fmtTick(v)}</text>`}
+  /* x-Ticks alle 3h */
+  let xt='';for(let h=0;h<24;h+=3){xt+=`<text x="${X(h)}" y="${H-8}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${String(h).padStart(2,'0')}h</text>`}
+  /* Engpassfenster */
+  let cong='';const c=b.congestion;
+  if(c&&c.window_hours&&c.window_hours.length){
+    const a=Math.min(...c.window_hours),z=Math.max(...c.window_hours);
+    cong=`<rect x="${X(a)}" y="${p.t}" width="${Math.max(X(z)-X(a),4)}" height="${H-p.t-p.b}" fill="var(--warn)" opacity=".12"/>`}
+  /* Band + Linien */
+  const band=path(p90)+' '+p10.slice().reverse().map((v,i)=>'L'+X(23-i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ')+' Z';
+  const rline=resid?`<path d="${path(resid.map(h=>h.p50))}" fill="none" stroke="var(--purple)" stroke-width="2" stroke-dasharray="6 4"/>`:'';
+  const iline=intr?`<path d="${pathHours(intr)}" fill="none" stroke="var(--warn)" stroke-width="2.4" stroke-dasharray="5 5"/>`:'';
+  const rating=(ratingMw&&ratingMw>=y0&&ratingMw<=y1)?
+    `<line x1="${p.l}" x2="${W-p.r}" y1="${Y(ratingMw)}" y2="${Y(ratingMw)}" stroke="var(--bad)" stroke-width="1.6" stroke-dasharray="4 4"/>
+     <text x="${W-p.r-4}" y="${Y(ratingMw)-5}" text-anchor="end" font-size="10" fill="var(--bad)">Rating ${fmtTick(ratingMw)}</text>`:'';
+  el.innerHTML=`<svg id="chSvg" viewBox="0 0 ${W} ${H}">
+    ${grid}${cong}
+    <path d="${band}" fill="var(--band)" stroke="var(--accent)" stroke-opacity=".35" stroke-width="1"/>
+    <path d="${path(p50)}" fill="none" stroke="var(--good)" stroke-width="2.6" stroke-linejoin="round"/>
+    ${rline}${iline}${rating}${xt}
+    <g id="chCursor" style="display:none">
+      <line id="chVline" y1="${p.t}" y2="${H-p.b}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3"/>
+      <circle id="chDot" r="4" fill="var(--good)" stroke="var(--bg)" stroke-width="1.5"/>
+    </g></svg>`;
+  CH={hours,resid,X,Y,p,W,H};
+  const svg=$('chSvg');
+  svg.addEventListener('mousemove',hover);svg.addEventListener('mouseleave',()=>{
+    $('tip').style.display='none';const cur=$('chCursor');if(cur)cur.style.display='none'});}
+function hover(ev){if(!CH)return;const svg=$('chSvg'),r=svg.getBoundingClientRect();
+  const fx=(ev.clientX-r.left)/r.width*CH.W;
+  let h=Math.round((fx-CH.p.l)/((CH.W-CH.p.l-CH.p.r)/23));h=Math.max(0,Math.min(23,h));
+  const d=CH.hours[h];if(!d)return;
+  const cur=$('chCursor');cur.style.display='';
+  $('chVline').setAttribute('x1',CH.X(h));$('chVline').setAttribute('x2',CH.X(h));
+  $('chDot').setAttribute('cx',CH.X(h));$('chDot').setAttribute('cy',CH.Y(d.p50));
+  const tip=$('tip');
+  tip.innerHTML=`<div class="muted" style="margin-bottom:4px">${String(h).padStart(2,'0')}:00 Uhr</div>
+    <div>P90&nbsp;<b>${n(d.p90,2)}</b></div><div style="color:var(--good)">P50&nbsp;<b>${n(d.p50,2)}</b></div>
+    <div>P10&nbsp;<b>${n(d.p10,2)}</b></div>`+
+    (CH.resid&&CH.resid[h]?`<div style="color:var(--purple)">Residual&nbsp;<b>${n(CH.resid[h].p50,2)}</b></div>`:'');
+  tip.style.display='block';
+  tip.style.left=Math.min(ev.clientX+14,window.innerWidth-180)+'px';
+  tip.style.top=(ev.clientY+14)+'px';}
+function niceStep(x){const e=Math.pow(10,Math.floor(Math.log10(x||1)));const m=x/e;
+  return (m<1.5?1:m<3.5?2:m<7.5?5:10)*e}
+function fmtTick(v){return Math.abs(v)>=100?Math.round(v):Number(v.toFixed(1))}
+
+/* ---------- §14a-Eingriffs-Streifen (24 Zellen) ---------- */
+function renderStrip(b){const r=b.redispatch;const el=$('ctlStrip');
+  if(!r||!Array.isArray(r.hourly)){el.innerHTML='';return}
+  const maxShed=Math.max(...r.hourly.map(h=>h.shed_kw||0),1);
+  el.innerHTML='<div class="strip">'+r.hourly.map(h=>{
+    const on=h.intervention;const hgt=on?Math.max(20,Math.round((h.shed_kw||0)/maxShed*100)):0;
+    const bg=on?'background:linear-gradient(180deg,transparent '+(100-hgt)+'%, var(--warn) '+(100-hgt)+'%);border-color:var(--warn)':'';
+    const tt=on?`${String(h.hour).padStart(2,'0')}h: Eingriff, shed ${n(h.shed_kw,1)} kW`:`${String(h.hour).padStart(2,'0')}h: kein Eingriff`;
+    return `<div class="cell" style="${bg}" title="${esc(tt)}">${h.hour%6===0?String(h.hour).padStart(2,'0'):''}</div>`}).join('')+'</div>'+
+    '<div class="muted" style="font-size:11px">24-h-Eingriffsprofil (Füllhöhe = Abregelung). Fahrplan-Entwurf für zertifizierten aEMT.</div>'}
+
+/* ---------- Panels ---------- */
+function kv(rows){return '<table class="kv"><tbody>'+rows.map(r=>'<tr><th>'+esc(r[0])+'</th><td>'+r[1]+'</td></tr>').join('')+'</tbody></table>'}
+function renderControl(b){const r=b.redispatch,t=b.tariff_schedule,d=b.dispatch_plan,
+  cv=d&&d.risk_averse,c=b.congestion;
+  $('control').innerHTML=kv([
+    ['Engpass',c?('<span class="warn">'+esc((c.window_hours||[]).join(', ')+' h')+'</span> · Basis '+esc(c.basis||'load')):'<span class="ok">kein Engpass</span>'],
+    ['Redispatch',r?(esc(n(r.saved_vs_naive_kwh,2))+' kWh weniger Abregelung vs. naiv · grid_safe '+badge(r.grid_safe)):'–'],
+    ['Zeitvariabler Tarif (Modul 3)',t?(esc(eur(t.saving_eur))+' Ersparnis · feasible '+badge(t.feasible)):'–'],
+    ['Quantil-Dispatch',d?('Newsvendor '+esc(eur(d.newsvendor_saving_eur))+' · grid_safe '+badge(d.grid_safe)):'–'],
+    ['CVaR-Nominierung',cv?('β='+esc(String(cv.beta))+' · ΔCVaR '+esc(eur(cv.risk_cvar_delta_vs_newsvendor_eur))):'nicht aktiv']])}
+function badge(ok){return '<span class="badge '+(ok?'ok':'bad')+'">'+(ok?'ja':'nein')+'</span>'}
+function bar(pct,color){const c=Math.max(0,Math.min(100,pct||0));
+  return `<div style="background:var(--panel2);border:1px solid var(--line);border-radius:6px;height:10px;overflow:hidden">
+    <div style="width:${c}%;height:100%;background:${color}"></div></div>`}
+function renderGrid(b){const o=b.overload,h=b.hosting_capacity,th=b.thermal,a=b.asset_limit;
+  const op=o?(o.max_exceedance_prob||0)*100:null,tp=th?(th.max_exceedance_prob||0)*100:null;
+  $('gridRisk').innerHTML=kv([
+    ['Rating (eine Wahrheit)',a?(esc(n(a.rating_kw,0))+' kW · Quelle '+esc(a.source||'–')):'nicht gesetzt'],
+    ['Überlast-Wkt. (max)',o?(esc(n(op,1))+' % · '+esc(String(o.hours_at_risk||0))+' h at risk'+bar(op,op>5?'var(--bad)':'var(--good)')):'–'],
+    ['Hosting-Capacity',h?(esc(n(h.hosting_capacity_kw,0))+' kW frei · bindende Stunde '+esc(String(h.binding_hour))):'–'],
+    ['Trafo-Thermik',th?(esc(n(tp,1))+' % · Alterung '+esc(n(th.expected_loss_of_life_h_total,2))+' h'+bar(tp,tp>5?'var(--bad)':'var(--good)')):'–']])}
+function renderMoney(b){const er=b.economics_realized,ee=b.economics_expected,mmm=b.mmm;
+  $('money').innerHTML=kv([
+    ['Bilanzkreis realisiert',er&&er.status!=='not_available'?(esc(eur(er.annualized_saving_eur||er.saving_eur_year))+' · P(>0) '+esc(n(er.prob_positive,2))):'–'],
+    ['Erwartung (signed Spread)',ee?esc(eur(ee.expected_eur_per_year))+' / Jahr':'–'],
+    ['Mehr-/Mindermengen',mmm&&mmm.status==='available'?(esc(n(mmm.abs_volumen_reduktion_mwh,3))+' MWh weniger · '+esc(eur(mmm.abs_volumen_reduktion_at_price_eur))):'–']])}
+function renderPool(b){const p=b.pool_dispatch;
+  if(!p||!Array.isArray(p.hourly)){$('pool').innerHTML='<div class="muted">kein Pool-Dispatch im JSON</div>';return}
+  const maxd=Math.max(...p.hourly.map(h=>h.pool_demand_kw||0),1);
+  const bars='<div class="minibars">'+p.hourly.map(h=>{
+    const shed=(h.pool_shed_kw||0)>0.01;
+    return `<i title="${String(h.hour).padStart(2,'0')}h · Demand ${n(h.pool_demand_kw,1)} · Limit ${n(h.pool_limit_kw,1)} kW" style="height:${Math.max(3,(h.pool_limit_kw||0)/maxd*100)}%;${shed?'background:var(--warn);opacity:.95':''}"></i>`}).join('')+'</div>';
+  $('pool').innerHTML='<div style="font-size:12.5px;margin-bottom:2px">grid_safe '+badge(p.grid_safe)+' · all_feasible '+badge(p.all_feasible)+' · Abregelung <b>'+esc(n(p.pool_shed_kwh,3))+' kWh</b></div>'+bars+
+    '<div class="muted" style="font-size:11px">Balken = Pool-Limit je Stunde (orange = gekappt). Hover für Details.</div>'}
+
+/* ---------- Track-Record (Sparkline + Tabelle) ---------- */
+function renderTrack(b){const tr=b.track_record;const badgeEl=$('tBadge');
+  if(!tr){$('track').innerHTML='<div class="muted">Kein Forecast-Store aktiv. Pfad links setzen — dann wird jede Prognose <b>zum Ausgabezeitpunkt</b> hash-verkettet gespeichert und gegen die Realität abgerechnet.</div>';
+    badgeEl.textContent='–';badgeEl.className='badge dim';return}
+  badgeEl.textContent=tr.chain_ok?'Hash-Kette OK':'Kette manipuliert';
+  badgeEl.className='badge '+(tr.chain_ok?'ok':'bad');
+  const agg=tr.aggregate,days=tr.last_30_days||[];
+  const kpis=`<div class="kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px">
+    <div class="kpi"><div class="v">${agg?n(agg.mae_mean,3):'–'}</div><div class="l">MAE realisierte Tage</div></div>
+    <div class="kpi"><div class="v">${agg?n(agg.coverage_mean_pct,1)+' %':'–'}</div><div class="l">Coverage P10–P90 (Soll 80)</div></div>
+    <div class="kpi"><div class="v">${tr.n_realized||0}</div><div class="l">Realisierte Tage</div></div>
+    <div class="kpi"><div class="v">${tr.n_pending||0}</div><div class="l">Pending · ${tr.n_forecasts_stored||0} im Store</div></div></div>`;
+  let spark='';
+  if(days.length>1){const W=940,H=70,m=8;const v=days.map(d=>d.mae);
+    const lo=Math.min(...v),hi=Math.max(...v),rg=hi-lo||1;
+    const X=i=>m+(W-2*m)*i/(v.length-1),Y=x=>m+(H-2*m)*(1-(x-lo)/rg);
+    spark=`<svg viewBox="0 0 ${W} ${H}" style="margin:2px 0 6px">
+      <path d="${v.map((x,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(x).toFixed(1)).join(' ')}"
+        fill="none" stroke="var(--accent)" stroke-width="2"/>
+      ${v.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x)}" r="2.5" fill="var(--accent)"><title>${days[i].target_date}: MAE ${n(x,3)}</title></circle>`).join('')}
+      <text x="${m}" y="${H-2}" font-size="9.5" fill="var(--muted)">${days[0].target_date}</text>
+      <text x="${W-m}" y="${H-2}" text-anchor="end" font-size="9.5" fill="var(--muted)">${days[days.length-1].target_date}</text>
+    </svg>`}
+  const tbl=days.length?('<table><thead><tr><th>Zieltag</th><th>ausgegeben (UTC)</th><th class="num">MAE</th><th class="num">Bias</th><th class="num">Coverage %</th></tr></thead><tbody>'+
+    days.slice().reverse().map(d=>`<tr><td>${esc(d.target_date)}</td><td class="muted">${esc((d.issued_at_utc||'').replace('T',' ').slice(0,16))}</td><td class="num">${n(d.mae,3)}</td><td class="num">${n(d.bias,3)}</td><td class="num">${n(d.coverage_p10_p90_pct,1)}</td></tr>`).join('')+'</tbody></table>')
+    :'<div class="muted">Noch keine realisierten Tage — Prognosen sind pending.</div>';
+  $('track').innerHTML=kpis+spark+tbl+
+   '<div class="note">Hash-verkettete, <b>vorab ausgegebene</b> Prognosen vs. Ist — Live-Track-Record, kein Backtest. Manipulationssicher = Hash-Kette, <b>keine juristische Zertifizierung</b>. Immer alle realisierten Tage, kein Zeitraum-Cherry-Picking.</div>'}
+
+/* ---------- Caveats (Ehrlichkeits-Register) ---------- */
+function renderCaveats(b){const items=[];
+  if(b.holiday_overrides)items.push(['Feiertags-Override',
+    'als Feiertag: '+((b.holiday_overrides.added||[]).join(', ')||'–')+
+    ' · nicht als Feiertag: '+((b.holiday_overrides.removed||[]).join(', ')||'–')+
+    ' · Zieltag ist Feiertag: '+(b.holiday_overrides.target_is_holiday?'ja':'nein')+
+    ' — '+(b.holiday_overrides.caveat||'')]);
+  if(b.asset_limit)items.push(['asset_limit',b.asset_limit.note||'Eine Rating-Wahrheit für Überlast, Dispatch und Thermik.']);
+  ['overload','hosting_capacity','thermal','tariff_schedule','dispatch_plan','economics_realized','mmm','pool_dispatch']
+    .forEach(k=>{if(b[k]&&(b[k].caveat||b[k].basis))items.push([k,b[k].caveat||b[k].basis])});
+  $('caveats').innerHTML=items.length?items.map(it=>'<div class="note"><b>'+esc(it[0])+'</b> — '+esc(it[1])+'</div>').join('')
+    :'<div class="muted">keine Caveats im JSON</div>'}
+
+render(null);
+</script>
+</body>
+</html>

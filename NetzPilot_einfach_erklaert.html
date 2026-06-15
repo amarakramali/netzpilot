@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetzPilot — einfach erklärt</title>
+<style>
+  :root{
+    --bg:#0d1420; --bg2:#0a1018; --card:#151f2c; --card2:#1b2735; --line:#26344a;
+    --ink:#eaf1f8; --mut:#94a6bc; --soft:#b8c6d8;
+    --teal:#36c1a6; --blue:#4d9fff; --amber:#e0a23b; --red:#e0614d;
+    --r:16px; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:linear-gradient(180deg,#0d1420,#0a0f17);color:var(--ink);
+    font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+  a{color:var(--teal)}
+
+  /* Hero */
+  header.hero{padding:64px 0 50px;text-align:center;border-bottom:1px solid var(--line)}
+  .logo{font-size:26px;font-weight:800;letter-spacing:-.02em;margin-bottom:30px}
+  .logo span{color:var(--teal)}
+  h1{font-size:40px;line-height:1.15;margin:0 0 18px;letter-spacing:-.02em}
+  h1 .hl{color:var(--teal)}
+  .sub{font-size:19px;color:var(--soft);max-width:680px;margin:0 auto}
+  .pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+  .pill{font-size:13px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:7px 14px;background:var(--card)}
+
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--teal);font-weight:700;margin-bottom:10px}
+  h2{font-size:28px;margin:0 0 14px;letter-spacing:-.01em}
+  h3{font-size:18px;margin:0 0 6px}
+  p.lead{font-size:18px;color:var(--soft);margin:0 0 8px}
+  p{color:var(--soft)}
+
+  /* Analogy box */
+  .analogy{background:linear-gradient(135deg,#16242e,#14202c);border:1px solid var(--line);
+    border-radius:var(--r);padding:26px 28px;margin:22px 0}
+  .analogy .tag{display:inline-block;font-size:12px;font-weight:700;color:#04110d;background:var(--amber);
+    border-radius:6px;padding:3px 9px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+  .analogy p{color:var(--ink);font-size:17px;margin:0}
+  .analogy .twist{color:var(--mut);font-size:15px;margin-top:12px}
+
+  /* Steps */
+  .steps{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:26px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+  .step .n{width:34px;height:34px;border-radius:9px;background:var(--teal);color:#04110d;
+    font-weight:800;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:14px}
+  .step h3{font-size:16px}
+  .step p{font-size:14.5px;margin:6px 0 0;color:var(--mut)}
+
+  /* Benefit cards */
+  .benefits{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:26px}
+  .ben{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .ben .ic{font-size:26px;margin-bottom:10px}
+  .ben h3{font-size:17px}
+  .ben p{font-size:14.5px;color:var(--mut);margin:6px 0 0}
+
+  /* Trust */
+  .trust-grid{display:grid;gap:16px;grid-template-columns:1fr 1fr;margin-top:24px}
+  @media(max-width:640px){.trust-grid{grid-template-columns:1fr}}
+  .trust{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+  .trust h3{font-size:16px;display:flex;align-items:center;gap:9px}
+  .trust h3 .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);flex:none}
+  .trust p{font-size:14px;color:var(--mut);margin:8px 0 0}
+  .quote{background:var(--card2);border-left:3px solid var(--teal);border-radius:0 12px 12px 0;
+    padding:20px 24px;margin:28px 0 0;font-size:17px;color:var(--ink);font-style:italic}
+
+  /* honest box */
+  .honest{background:#1a1410;border:1px solid #3a2c18;border-radius:var(--r);padding:22px 26px;margin-top:26px}
+  .honest h3{color:var(--amber);font-size:16px;margin-bottom:8px}
+  .honest p{color:#d9c8ac;font-size:14.5px;margin:0}
+
+  /* pilot timeline */
+  .timeline{margin-top:26px;display:grid;gap:0}
+  .tl{display:flex;gap:18px;padding:18px 0;border-bottom:1px dashed var(--line)}
+  .tl:last-child{border-bottom:0}
+  .tl .when{flex:none;width:120px;color:var(--teal);font-weight:700;font-size:14px}
+  .tl .what h3{font-size:16px}
+  .tl .what p{font-size:14px;color:var(--mut);margin:5px 0 0}
+
+  /* mini chart */
+  .chartcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin-top:24px}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin-top:12px}
+  .sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:7px}
+
+  footer{padding:40px 0 60px;text-align:center;color:var(--mut);font-size:13px}
+  .cta{display:inline-block;margin-top:8px;background:var(--teal);color:#04110d;font-weight:800;
+    text-decoration:none;padding:14px 28px;border-radius:11px;font-size:16px}
+  .disc{max-width:680px;margin:22px auto 0;font-size:12.5px;color:#6c7d92;line-height:1.55}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="logo">Netz<span>Pilot</span></div>
+    <h1>Wir helfen Stadtwerken,<br><span class="hl">morgen schon heute zu kennen.</span></h1>
+    <p class="sub">Ein kleines Stadtwerk muss jeden Tag erraten, wie viel Strom seine Stadt am
+    nächsten Tag braucht. Liegt es daneben, kostet das Geld und belastet das Netz.
+    Unsere Software macht aus dem Raten eine fundierte Vorhersage.</p>
+    <div class="pills">
+      <span class="pill">Für kleine &amp; mittlere Stadtwerke</span>
+      <span class="pill">Läuft auf dem eigenen Rechner</span>
+      <span class="pill">Kein Fachwissen nötig</span>
+    </div>
+  </div>
+</header>
+
+<!-- WAS IST DAS PROBLEM -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Worum geht es überhaupt?</div>
+    <h2>Strom muss vorbestellt werden</h2>
+    <p class="lead">Anders als die meisten denken: Ein Stadtwerk kann Strom nicht einfach „aus der
+    Steckdose" nehmen, wenn er gebraucht wird. Es muss schon am Vortag anmelden, wie viel es
+    morgen pro Stunde liefern wird — und diese Menge dann auch treffen.</p>
+
+    <div class="analogy">
+      <span class="tag">Stell dir vor</span>
+      <p>Du führst eine Bäckerei und musst <b>jeden Abend bestellen, wie viele Brötchen du morgen
+      verkaufst</b> — Stunde für Stunde. Bestellst du zu viel, bleibst du drauf sitzen.
+      Bestellst du zu wenig, musst du teuer nachkaufen.</p>
+      <p class="twist">Genau so geht es einem Stadtwerk mit Strom. Nur dass „zu viel" oder „zu wenig"
+      richtig teuer wird — diesen Aufpreis nennt die Branche <b>Ausgleichsenergie</b>.</p>
+    </div>
+
+    <p>Bisher schätzt man diese Menge oft mit einer simplen Faustregel („gleicher Wochentag wie
+    letzte Woche") oder per Handarbeit in Excel. Das geht — aber es lässt Geld liegen und kostet Zeit.</p>
+  </div>
+</section>
+
+<!-- WAS TUT DIE SOFTWARE -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Was unsere Software tut</div>
+    <h2>In drei Schritten von Daten zur Entscheidung</h2>
+    <p class="lead">NetzPilot bekommt die bisherigen Verbrauchsdaten des Stadtwerks und macht daraus
+    eine Vorhersage für jeden der nächsten 24 Stunden — inklusive einer ehrlichen Spanne
+    („mindestens so viel, höchstens so viel").</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Vergangenheit einlesen</h3>
+        <p>Das Stadtwerk lädt seine Verbrauchsdaten als Datei hoch — die liegen ohnehin vor.
+        Mehr braucht es nicht.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Muster lernen</h3>
+        <p>Die Software erkennt Tages-, Wochen- und Jahresrhythmen und sagt die Last für morgen
+        voraus — mit Ober- und Untergrenze statt nur einer Zahl.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Warnen &amp; vorschlagen</h3>
+        <p>Droht das Netz an seine Grenze zu kommen, schlägt NetzPilot rechtzeitig einen
+        gegensteuernden Plan vor — bevor es eng wird.</p>
+      </div>
+    </div>
+
+    <div class="chartcard">
+      <h3 style="margin-bottom:4px">So sieht eine Vorhersage aus</h3>
+      <p style="font-size:14px;color:var(--mut);margin:0 0 8px">Die grüne Linie ist die erwartete
+      Last über den Tag. Das blaue Band ist die ehrliche Spanne: So sicher ist sich die Software.</p>
+      <div id="chart"></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--teal)"></span>Erwartete Last</span>
+        <span><span class="sw" style="background:var(--blue);opacity:.35"></span>Spanne (von–bis)</span>
+        <span><span class="sw" style="background:var(--amber)"></span>Stunden mit Netz-Stress</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUTZEN -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Was das Stadtwerk davon hat</div>
+    <h2>Weniger Kosten, ruhigeres Netz, weniger Handarbeit</h2>
+
+    <div class="benefits">
+      <div class="ben">
+        <div class="ic">💶</div>
+        <h3>Weniger Strafkosten</h3>
+        <p>Je genauer die Vorhersage, desto seltener muss teuer nachgekauft oder Überschuss
+        verschleudert werden. Das spart bei der Ausgleichsenergie.</p>
+      </div>
+      <div class="ben">
+        <div class="ic">⚡</div>
+        <h3>Stabileres Netz</h3>
+        <p>Engpässe werden früh sichtbar. Das Stadtwerk kann gegensteuern, statt überrascht
+        zu werden — besonders wichtig mit immer mehr Wärmepumpen und E-Autos.</p>
+      </div>
+      <div class="ben">
+        <div class="ic">⏱️</div>
+        <h3>Weniger Handarbeit</h3>
+        <p>Statt täglicher Excel-Schätzung läuft die Vorhersage automatisch. Ein Klick, fertiger
+        Bericht — kein Daten-Team nötig.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Wichtig: Wir steuern <b>nichts heimlich</b> und greifen nicht in
+    sensible Technik ein. NetzPilot rechnet und schlägt vor — die Entscheidung und die Umsetzung
+    bleiben beim Stadtwerk und seinen zertifizierten Partnern.</p>
+  </div>
+</section>
+
+<!-- VERTRAUEN -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Warum man uns trauen kann</div>
+    <h2>Wir zeigen auch, was <em>nicht</em> funktioniert</h2>
+    <p class="lead">Die meisten Anbieter nennen nur ihre beste Zahl. Wir machen das Gegenteil:
+    Jede Behauptung ist nachgerechnet, und wo etwas zu schön war, sagen wir es.</p>
+
+    <div class="trust-grid">
+      <div class="trust">
+        <h3><span class="dot"></span>Fairer Vergleich</h3>
+        <p>Wir messen uns immer gegen die einfache Faustregel, die ein Stadtwerk heute schon
+        nutzt. Nur wenn wir die schlagen, ist unsere Vorhersage wirklich besser. Auf echten
+        Daten eines deutschen Stadtwerks waren wir rund <b>16 % treffsicherer</b>.</p>
+      </div>
+      <div class="trust">
+        <h3><span class="dot"></span>Kein Blick in die Zukunft</h3>
+        <p>Beim Testen sieht die Software nur, was sie am echten Tag auch wüsste — nie die
+        Lösung von morgen. So entsteht keine geschönte „Wunderquote", die im Alltag platzt.</p>
+      </div>
+      <div class="trust">
+        <h3><span class="dot"></span>Ehrliche Spanne</h3>
+        <p>Wir liefern nicht eine Zahl, die so tut als wäre sie sicher, sondern eine Spanne —
+        und prüfen offen, wie oft die Wirklichkeit tatsächlich darin lag.</p>
+      </div>
+      <div class="trust">
+        <h3><span class="dot"></span>Echte vs. künstliche Daten</h3>
+        <p>Wir trennen sauber, welche Ergebnisse aus echten Messdaten stammen und welche aus
+        Modellrechnungen — und werben nur mit den echten.</p>
+      </div>
+    </div>
+
+    <div class="quote">„Der Anbieter, der dir sagt, was nicht funktioniert, ist der, dem du den Rest glaubst."</div>
+
+    <div class="honest">
+      <h3>Und ganz ehrlich:</h3>
+      <p>Den genauen Euro-Betrag, den ein bestimmtes Stadtwerk spart, kennen wir erst, wenn wir
+      mit <b>dessen eigenen Daten</b> gerechnet haben. Wir versprechen keine Fantasie-Summe vorab.
+      Der Nutzen ist vor allem ein <b>Schutz vor teuren Ausreißern</b> — kein garantierter Gewinn
+      jeden Monat. Das sagen wir lieber vorher als nachher.</p>
+    </div>
+  </div>
+</section>
+
+<!-- START -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Wie ein Start aussieht</div>
+    <h2>Ein Pilot — risikoarm, mit den eigenen Daten</h2>
+    <p class="lead">Niemand muss uns auf Versprechen vertrauen. Wir rechnen erst mit den echten
+    Daten des Stadtwerks und zeigen das Ergebnis — <b>bevor</b> irgendeine Verpflichtung entsteht.</p>
+
+    <div class="timeline">
+      <div class="tl">
+        <div class="when">Schritt 1</div>
+        <div class="what">
+          <h3>Daten teilen</h3>
+          <p>Das Stadtwerk gibt uns seinen bisherigen Verbrauchsverlauf — eine Datei, die schon existiert.</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="when">Schritt 2</div>
+        <div class="what">
+          <h3>Ehrlicher Test</h3>
+          <p>Wir lassen die Vorhersage über das vergangene Jahr laufen und vergleichen sie mit der
+          bisherigen Methode des Stadtwerks. Transparent, nachvollziehbar.</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="when">Schritt 3</div>
+        <div class="what">
+          <h3>Ergebnis ansehen</h3>
+          <p>Das Stadtwerk bekommt einen klaren Bericht: Wie viel genauer? Wo hilft es? Erst dann
+          entscheidet es, ob es weitergeht.</p>
+        </div>
+      </div>
+      <div class="tl">
+        <div class="when">Schritt 4</div>
+        <div class="what">
+          <h3>In den Alltag</h3>
+          <p>Passt es, läuft NetzPilot täglich automatisch mit — auf dem eigenen Rechner des
+          Stadtwerks, ohne Daten aus der Hand zu geben.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="cta" href="#">Pilot anfragen</a>
+    <p class="disc">NetzPilot ist eine Software zur Lastprognose und Netz-Unterstützung für
+    Stadtwerke. Genauigkeits- und Einsparzahlen hängen vom jeweiligen Stadtwerk ab und werden
+    im Pilot mit dessen echten Daten ermittelt. Die hier genannten ~16 % stammen aus einem Test
+    auf öffentlich verfügbaren Daten eines deutschen Stadtwerks. Der Nutzen liegt vor allem im
+    Schutz vor teuren Prognosefehlern, nicht in einem garantierten festen Ertrag.</p>
+  </div>
+</footer>
+
+<script>
+// Kleines, ehrliches Beispiel-Diagramm (rein illustrativ, fest gezeichnet — keine echten Live-Daten).
+(function(){
+  const p50=[23,21,20,20,20,21,21,23,25,28,30,32,33,34,33,31,31,33,32,31,29,28,26,24];
+  const span=[1.3,1.2,1.1,1.1,1.1,1.2,1.4,1.9,2.3,2.4,2.6,2.9,3.2,3.4,3.3,3.1,3.0,2.7,2.1,1.7,1.5,1.4,1.4,1.3];
+  const p10=p50.map((v,i)=>v-span[i]), p90=p50.map((v,i)=>v+span[i]);
+  const W=860,H=300,pad={l:42,r:14,t:14,b:28},n=24;
+  const all=p90.concat(p10),lo=Math.min(...all)-1,hi=Math.max(...all)+1,rng=hi-lo;
+  const x=i=>pad.l+(W-pad.l-pad.r)*i/(n-1), y=v=>pad.t+(H-pad.t-pad.b)*(1-(v-lo)/rng);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const band=path(p90)+' '+p10.slice().reverse().map((v,i)=>'L'+x(n-1-i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')+' Z';
+  // "Stress"-Fenster 12–15 Uhr nur als Illustration
+  const s0=12,s1=15;
+  const stress=`<rect x="${x(s0).toFixed(1)}" y="${pad.t}" width="${(x(s1)-x(s0)).toFixed(1)}" height="${H-pad.t-pad.b}" fill="#e0a23b" fill-opacity="0.13"/>`;
+  let grid='';
+  for(let v=Math.ceil(lo/5)*5; v<hi; v+=5){const yy=y(v).toFixed(1);
+    grid+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#26344a"/>`+
+          `<text x="8" y="${(+yy+4)}" fill="#7c8ca0" font-size="11" font-family="monospace">${v}</text>`;}
+  let xl='';[0,6,12,18,23].forEach(i=>{xl+=`<text x="${x(i).toFixed(1)}" y="${H-9}" fill="#7c8ca0" font-size="11" text-anchor="middle">${String(i).padStart(2,'0')}:00</text>`;});
+  document.getElementById('chart').innerHTML=
+    `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet">`+
+    `${stress}${grid}<path d="${band}" fill="#4d9fff" fill-opacity="0.2"/>`+
+    `<path d="${path(p50)}" fill="none" stroke="#36c1a6" stroke-width="2.6"/>${xl}</svg>`;
+})();
+</script>
+
+</body>
+</html>

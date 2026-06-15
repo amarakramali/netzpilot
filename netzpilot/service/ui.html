@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetzPilot</title>
+<style>
+  :root{--bg:#0f1620;--panel:#17202c;--panel2:#1d2937;--line:#2b3a4d;--ink:#e8eef5;--muted:#93a4b8;
+    --accent:#36c1a6;--accent2:#4d9fff;--warn:#e0a23b;--bad:#e0614d;--good:#36c1a6;--radius:14px;
+    --mono:ui-monospace,Menlo,Consolas,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0f1620,#0c121a);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:1000px;margin:0 auto;padding:26px 20px 60px}
+  header.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .logo{font-size:25px;font-weight:700}.logo span{color:var(--accent)}
+  .tag{color:var(--muted);font-size:14px}
+  .pill{margin-left:auto;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+  .pill.ok{color:var(--good);border-color:#2c5} .pill.bad{color:var(--bad);border-color:#a44}
+  h2{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:28px 0 12px;font-weight:600}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .drop{border:2px dashed #34506b;border-radius:var(--radius);padding:26px;text-align:center;cursor:pointer;background:var(--panel)}
+  .drop.hover{border-color:var(--accent);background:#16242e}.drop b{color:var(--accent)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:14px}
+  label.fld{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  input,select{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:14px;font-family:var(--sans)}
+  input[type=text],input[type=number]{width:150px}
+  button{background:var(--accent);color:#04110d;border:0;border-radius:9px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .kpi .v{font-size:26px;font-weight:700}.kpi .l{color:var(--muted);font-size:12px;margin-top:2px}.kpi .s{font-size:11px;margin-top:6px}
+  .up{color:var(--good)}.flat{color:var(--muted)}.warn{color:var(--warn)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:10px}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+  .note{font-size:12.5px;color:var(--muted);margin-top:10px;border-left:3px solid var(--line);padding-left:12px}
+  .err{color:var(--bad);font-size:13.5px;margin-top:12px;white-space:pre-wrap;font-family:var(--mono)}
+  .busy{color:var(--accent);font-size:13.5px;margin-top:12px}
+  .hidden{display:none}.muted{color:var(--muted)}.small{font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  td,th{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11.5px;text-transform:uppercase}
+  td.num{text-align:right;font-family:var(--mono)}
+  code{background:var(--panel2);padding:1px 5px;border-radius:5px;font-size:12px}
+  .loop{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+  .lstep{flex:1;min-width:180px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 15px;position:relative}
+  .lstep .ln{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .lstep .lv{font-size:15px;font-weight:600;margin-top:3px}
+  .lstep .ls{font-size:12px;color:var(--muted);margin-top:4px;font-family:var(--mono);word-break:break-all}
+  .lstep.ok{border-color:#2c5}.lstep.ok .lv{color:var(--good)}
+  .lstep.warn{border-color:#a83}.lstep.warn .lv{color:var(--warn)}
+  .lstep.bad{border-color:#a44}.lstep.bad .lv{color:var(--bad)}
+  .larrow{display:flex;align-items:center;color:var(--muted);font-size:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">Netz<span>Pilot</span></div>
+    <div class="tag">Day-ahead-Prognose &amp; §14a — <b>echte Engine</b> (Python-Backend)</div>
+    <div id="health" class="pill">prüfe Verbindung…</div>
+  </header>
+
+  <h2>1 · Lastgang laden</h2>
+  <div class="card">
+    <div id="drop" class="drop">
+      <p style="margin:0 0 6px"><b>CSV oder Excel hier ablegen</b> oder klicken</p>
+      <p class="small muted" style="margin:0">Echter DSO-Lastgang (15-min oder stündlich), als CSV oder
+      Excel. Spalten werden <b>automatisch erkannt</b> — bei mehreren Netzebenen fragen wir nach.</p>
+      <input id="file" type="file" accept=".csv,text/csv,.xlsx,.xls,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="hidden">
+      <p class="small" style="margin:10px 0 0"><a href="#" id="loadSample">Kein Lastgang zur Hand? Beispiel laden ›</a></p>
+    </div>
+    <div id="detect" class="small hidden" style="margin-top:10px;padding:10px 12px;border-radius:8px;background:#16242e;border:1px solid var(--line)"></div>
+    <div class="row">
+      <label class="fld">Mandant<input id="utility" type="text" value="Mein Stadtwerk"></label>
+      <label class="fld">Einheit<select id="unit"><option>MW</option><option selected>kW</option><option>W</option></select></label>
+      <label class="fld">Region<select id="region">
+        <option>NW</option><option>BY</option><option>BW</option><option>NI</option><option>HE</option>
+        <option>SN</option><option>ST</option><option>TH</option><option>BB</option><option>MV</option>
+        <option>SH</option><option>RP</option><option>SL</option><option>BE</option><option>HH</option><option>HB</option></select></label>
+      <label class="fld">Zeitspalte <input id="tsCol" type="text" placeholder="auto"></label>
+      <label class="fld">Lastspalte <input id="loadCol" type="text" placeholder="auto"></label>
+      <label class="fld">reBAP CSV <input id="rebapCsv" type="text" value="data_cache/real/rebap_2024.csv"></label>
+      <label class="fld">Spot-DA CSV <input id="spotCsv" type="text" value="data_cache/real/spot_da_2024.csv"></label>
+      <label class="fld">Forecast-Store <input id="forecastStorePath" type="text" placeholder="data_cache/forecast_store/&lt;mandant&gt;.jsonl"></label>
+      <label class="fld">Erzeugung CSV <input id="genCsv" type="text" placeholder="optional (PV+Wind) → Residuallast"></label>
+      <label class="fld">Erzeugung Einheit<select id="genUnit"><option>MW</option><option>kW</option><option>W</option></select></label>
+      <label class="fld">Engpass-Schwelle MW <input id="thr" type="number" step="0.1" placeholder="optional"></label>
+      <label class="fld">Monitoring <span class="small"><input id="driftMon" type="checkbox"> Drift</span></label>
+      <label class="fld">Datencheck <span class="small"><input id="validateInput" type="checkbox" checked> aktiv</span></label>
+      <label class="fld">Max plausibel MW <input id="valMax" type="number" step="0.1" placeholder="optional"></label>
+      <label class="fld">Asset-Rating kW <input id="ratingKw" type="number" step="1" placeholder="optional"></label>
+      <label class="fld">Risiko alpha <input id="riskAlpha" type="number" step="0.01" min="0" max="1" value="0.05"></label>
+      <button id="run" disabled>Prognose rechnen</button>
+    </div>
+    <div id="fileinfo" class="small muted" style="margin-top:10px"></div>
+    <div id="busy" class="busy hidden">Engine rechnet (echter Backend-Lauf)…</div>
+    <div id="err" class="err hidden"></div>
+  </div>
+
+  <div id="results" class="hidden">
+    <h2>2 · Day-ahead-Prognose für <span id="fcDate"></span>
+      <a id="reportLink" href="#" target="_blank" style="float:right;font-size:12px;text-transform:none;letter-spacing:0">📄 Bericht (PDF) öffnen</a>
+    </h2>
+    <div class="grid">
+      <div class="card kpi"><div class="v" id="kPeak">–</div><div class="l">Spitzen-P50 (Last)</div><div class="s flat" id="kMean"></div></div>
+      <div class="card kpi" id="kResidCard"><div class="v" id="kResid">–</div><div class="l">Spitzen-P50 (Residuallast)</div><div class="s flat" id="kResidS"></div></div>
+      <div class="card kpi"><div class="v" id="kCol">–</div><div class="l">verwendete Lastspalte</div><div class="s flat" id="kLevel"></div></div>
+      <div class="card kpi"><div class="v" id="kHist">–</div><div class="l">Tage Historie</div><div class="s flat">leakage-sicher</div></div>
+      <div class="card kpi"><div class="v" id="kEcon">–</div><div class="l">Erwartete Einsparung/Jahr (Mittel-Aufschlag)</div><div class="s flat" id="kEconS"></div></div>
+      <div class="card kpi"><div class="v" id="kEconBand">–</div><div class="l">Risiko-/Stressband (|reBAP–Spot|)</div><div class="s flat" id="kEconBandS"></div></div>
+      <div class="card kpi"><div class="v warn" id="kEconUB">–</div><div class="l">Oberer Rand (|reBAP|, überschätzt)</div><div class="s flat" id="kEconUBS"></div></div>
+      <div class="card kpi"><div class="v" id="kCong">–</div><div class="l">§14a-Engpass</div><div class="s flat" id="kCongS"></div></div>
+      <div class="card kpi"><div class="v" id="kDrift">-</div><div class="l">Prognose-Drift</div><div class="s flat" id="kDriftS"></div></div>
+      <div class="card kpi"><div class="v" id="kVal">-</div><div class="l">Datenqualitaet</div><div class="s flat" id="kValS"></div></div>
+      <div class="card kpi"><div class="v" id="kOver">-</div><div class="l">Asset-Ueberlast</div><div class="s flat" id="kOverS"></div></div>
+      <div class="card kpi"><div class="v" id="kHost">-</div><div class="l">Hosting-Capacity</div><div class="s flat" id="kHostS"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><div id="chart"></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--accent)"></span>P50 Last (Prognose)</span>
+        <span><span class="sw" style="background:var(--accent2);opacity:.35"></span>P10–P90-Band (kalibriert)</span>
+        <span><span class="sw" style="background:var(--warn)"></span>P50 Residuallast / Engpassfenster</span>
+      </div>
+    </div>
+    <div id="fpCard" class="card hidden" style="margin-top:14px">
+      <h2 style="margin-top:0">§14a-Regelkreis</h2>
+      <div id="loopSteps" class="loop"></div>
+      <table style="margin-top:14px"><tbody id="fpBody"></tbody></table>
+      <p class="note">Entwurf der Engine. Produktiv geht der Fahrplan an einen zertifizierten White-Label-aEMT,
+      nicht direkt ans SMGW. 4,2-kW-Mindestleistung wird erzwungen.</p>
+    </div>
+    <p class="note">Diese Zahlen kommen aus dem <b>echten Python-Backend</b> (<code>netzpilot/</code> via
+    <code>/forecast</code>), nicht aus einer Browser-Nachbildung. Die Prognose ist gespeichert und unter
+    <code>/forecast/{Mandant}/latest</code> abrufbar.</p>
+
+    <h2>3 · Verlauf</h2>
+    <div class="card"><div id="histBody" class="small muted">Noch kein Lauf für diesen Mandanten.</div></div>
+
+    <h2>4 · Live-Track-Record <span id="tChainBadge" class="pill hidden" style="margin-left:8px">–</span></h2>
+    <div class="card" id="trackCard">
+      <div id="trackEmpty" class="small muted">Kein Forecast-Store aktiv. Pfad oben setzen, dann werden ausgegebene Prognosen hash-verkettet gespeichert und gegen die Realität abgerechnet.</div>
+      <div id="trackBody" class="hidden">
+        <div class="grid">
+          <div class="card kpi"><div class="v" id="tMae">–</div><div class="l">MAE realisierte Tage</div><div class="s flat" id="tMaeS"></div></div>
+          <div class="card kpi"><div class="v" id="tCov">–</div><div class="l">Coverage P10–P90</div><div class="s flat">Soll 80 %</div></div>
+          <div class="card kpi"><div class="v" id="tN">–</div><div class="l">Realisierte Tage</div><div class="s flat" id="tNS"></div></div>
+        </div>
+        <table style="margin-top:14px">
+          <thead><tr><th>Zieltag</th><th>ausgegeben (UTC)</th><th class="num">MAE</th><th class="num">Bias</th><th class="num">Coverage %</th></tr></thead>
+          <tbody id="tDays"></tbody>
+        </table>
+        <p class="note" id="tNote">Hash-verkettete, VORAB ausgegebene Prognosen vs. Ist — Live-Track-Record, kein Backtest.
+        <b>Manipulationssicher = Hash-Kette</b> (Unverändertheit seit Aufzeichnung), <b>keine juristische Zertifizierung</b>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id); let file=null;
+// Health-Check gegen das echte Backend
+fetch('/health').then(r=>r.json()).then(j=>{const p=$('health');p.textContent='Backend verbunden · v'+j.version;p.className='pill ok';})
+  .catch(()=>{const p=$('health');p.textContent='Backend nicht erreichbar';p.className='pill bad';});
+const drop=$('drop'),fi=$('file');
+drop.onclick=()=>fi.click();
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('hover');};
+drop.ondragleave=()=>drop.classList.remove('hover');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('hover');if(e.dataTransfer.files[0])pick(e.dataTransfer.files[0]);};
+fi.onchange=e=>{if(e.target.files[0])pick(e.target.files[0]);};
+function pick(f){file=f;$('fileinfo').textContent='Geladen: '+f.name+' ('+(f.size/1024).toFixed(0)+' KB)';$('run').disabled=false;showErr('');inspect(f);}
+
+// Onboarding: Spalten automatisch erkennen, damit niemand raten muss.
+async function inspect(f){
+  const det=$('detect'); det.classList.remove('hidden'); det.innerHTML='Spalten werden erkannt…';
+  try{
+    const fd=new FormData(); fd.append('file',f); fd.append('unit',$('unit').value);
+    const j=await (await fetch('/inspect',{method:'POST',body:fd})).json();
+    if(j.ts_col) $('tsCol').value=j.ts_col;
+    const cands=j.load_candidates||[];
+    const v=j.input_validation;
+    const vtxt=(v&&v.enabled)?(' Datenqualitaet '+((v.quality_score||0)*100).toFixed(1)+' %, '+(v.n_issues_total||0)+' Issues.'):'';
+    if(cands.length<=1){
+      if(j.suggested_load_col) $('loadCol').value=j.suggested_load_col;
+      det.innerHTML='✓ Erkannt: Zeitspalte <code>'+(j.ts_col||'auto')+'</code>, Lastspalte <code>'+(j.suggested_load_col||'auto')+'</code>.'+vtxt+' Bereit.';
+    }else{
+      // Mehrere Netzebenen -> Auswahl statt raten
+      const opts=cands.map(c=>`<option value="${c.name}">${c.name}${c.level?(' · '+c.level):''} (Ø ${(+c.mean_MW).toFixed(1)} MW)</option>`).join('');
+      det.innerHTML='⚠ Mehrere Lastspalten gefunden (mehrere Netzebenen).'+vtxt+' Bitte wählen: '+
+        `<select id="detSel" style="margin-left:6px">${opts}</select>`;
+      $('loadCol').value=cands[0].name;
+      $('detSel').onchange=e=>{$('loadCol').value=e.target.value;};
+    }
+  }catch(e){ det.innerHTML='Spaltenerkennung übersprungen — bitte Spalten ggf. manuell setzen.'; }
+}
+
+$('loadSample').onclick=async(e)=>{
+  e.preventDefault(); showErr(''); $('detect').classList.remove('hidden'); $('detect').innerHTML='Beispiel wird geladen…';
+  try{
+    const r=await fetch('/sample.csv');
+    if(!r.ok) throw new Error('Beispiel nicht verfügbar');
+    const blob=await r.blob();
+    const f=new File([blob],'beispiel_lastgang.csv',{type:'text/csv'});
+    $('unit').value='kW'; pick(f);
+  }catch(err){ showErr(err.message||String(err)); }
+};
+function showErr(m){const e=$('err');if(m){e.textContent='⚠ '+m;e.classList.remove('hidden');}else e.classList.add('hidden');}
+const fmt=(v,d=1)=>(v==null||isNaN(v))?'–':(+v).toFixed(d);
+
+$('run').onclick=async()=>{
+  if(!file)return; showErr(''); $('busy').classList.remove('hidden'); $('run').disabled=true;
+  try{
+    const fd=new FormData();
+    fd.append('file',file); fd.append('utility',$('utility').value||'default');
+    fd.append('unit',$('unit').value); fd.append('region',$('region').value);
+    if($('tsCol').value.trim())fd.append('ts_col',$('tsCol').value.trim());
+    if($('loadCol').value.trim())fd.append('load_col',$('loadCol').value.trim());
+    if($('rebapCsv').value.trim())fd.append('rebap_csv',$('rebapCsv').value.trim());
+    if($('spotCsv').value.trim())fd.append('spot_csv',$('spotCsv').value.trim());
+    if($('forecastStorePath').value.trim())fd.append('forecast_store_path',$('forecastStorePath').value.trim());
+    if($('genCsv').value.trim()){fd.append('generation_csv',$('genCsv').value.trim());fd.append('generation_unit',$('genUnit').value);}
+    if($('thr').value)fd.append('congestion_threshold_mw',$('thr').value);
+    fd.append('drift_monitoring',$('driftMon').checked?'true':'false');
+    fd.append('validate_input',$('validateInput').checked?'true':'false');
+    if($('valMax').value)fd.append('validate_max_plausible',$('valMax').value);
+    if($('ratingKw').value)fd.append('asset_rating_kw',$('ratingKw').value);
+    if($('riskAlpha').value)fd.append('overload_risk_alpha',$('riskAlpha').value);
+    fd.append('steuve_malo','DE-DEMO-0000000000001');
+    fd.append('submit_to_aemt','true');   // §14a-Regelkreis end-to-end zeigen
+    const resp=await fetch('/forecast',{method:'POST',body:fd});
+    const body=await resp.json();
+    if(!resp.ok) throw new Error(body.detail||('HTTP '+resp.status));
+    render(body);
+  }catch(e){showErr(e.message||String(e));}
+  finally{$('busy').classList.add('hidden');$('run').disabled=false;}
+};
+
+function render(b){
+  $('results').classList.remove('hidden');
+  $('fcDate').textContent=b.forecast_date;
+  const peak=Math.max(...b.forecast.map(h=>h.p50));
+  $('kPeak').textContent=fmt(peak,1)+' MW';
+  $('kMean').textContent='⌀ Woche '+fmt(b.recent_mean_load_mw,1)+' MW';
+  const rf=b.residual_forecast;
+  if(rf){
+    $('kResidCard').style.display='';
+    const rpeak=Math.max(...rf.forecast.map(h=>h.p50));
+    $('kResid').textContent=fmt(rpeak,1)+' MW';
+    $('kResidS').textContent='Last − Erzeugung ('+(rf.generation_column||'PV+Wind')+'); §14a-Basis';
+  }else{ $('kResidCard').style.display='none'; }
+  $('kCol').textContent=b.load_column||'—';
+  $('kLevel').textContent=b.load_level?('Ebene '+b.load_level):'';
+  $('kHist').textContent=b.n_days_history;
+  const exp=b.economics_expected, econ=b.economics, ub=b.economics_upper_bound;
+  // Headline = Erwartungswert (signierter Mittel-Aufschlag); ohne Spot fallback auf |reBAP|-only.
+  if(exp){
+    $('kEcon').textContent=fmtEUR(exp.expected_eur_per_year);
+    $('kEconS').textContent='Mittel-Aufschlag '+fmt(exp.signed_mean_spread_eur_mwh,2)+' EUR/MWh; ehrlichste Erwartung';
+  }else if(econ){
+    $('kEcon').textContent=fmtEUR(econ.eur_per_year_point_median);
+    $('kEconS').textContent='|reBAP|-only — UPPER BOUND, kein Spot geliefert';
+  }else{ $('kEcon').textContent='–'; $('kEconS').textContent='optional'; }
+  // Risiko-/Stressband nur wenn Spot vorhanden (dann econ = |reBAP-Spot|-Band)
+  if(exp && econ){
+    $('kEconBand').textContent=fmtEUR(econ.eur_per_year_point_median);
+    $('kEconBandS').textContent=fmtEUR(econ.eur_per_year_p25)+' bis '+fmtEUR(econ.eur_per_year_p75)+'; Volatilität, nicht Erwartung';
+  }else{ $('kEconBand').textContent='–'; $('kEconBandS').textContent=''; }
+  $('kEconUB').textContent=ub?fmtEUR(ub.eur_per_year_point_median):'–';
+  $('kEconUBS').textContent=ub?('Band '+fmtEUR(ub.eur_per_year_p25)+' bis '+fmtEUR(ub.eur_per_year_p75)+'; gespart wird nur der Aufschlag'):'';
+  const c=b.congestion;
+  $('kCong').textContent=c?('ja'):'nein'; $('kCong').className='v '+(c?'warn':'flat');
+  const cbasis=c&&c.basis==='residual'?' (Residuallast)':(c?' (Last)':'');
+  $('kCongS').textContent=c?('Fenster '+c.window_hours[0]+'–'+(c.window_hours[c.window_hours.length-1]+1)+' Uhr'+cbasis):'kein Eingriff nötig';
+  const d=b.drift;
+  if(d){
+    $('kDrift').textContent=d.status||'n/a';
+    $('kDrift').className='v '+(d.needs_recalibration?'warn':'flat');
+    $('kDriftS').textContent=d.needs_recalibration?'Re-Kalibrierung pruefen':(d.reference?('Referenz n='+d.reference.n_errors):'Monitoring aktiv');
+  }else{
+    $('kDrift').textContent='aus';
+    $('kDrift').className='v flat';
+    $('kDriftS').textContent='optional';
+  }
+  const v=b.input_validation;
+  if(v&&v.enabled){
+    $('kVal').textContent=fmt((v.quality_score||0)*100,1)+' %';
+    $('kVal').className='v '+((v.n_issues_total||0)?'warn':'flat');
+    $('kValS').textContent=(v.n_issues_total||0)+' Issues, '+(v.n_replaced||0)+' Ersatzwerte';
+  }else{
+    $('kVal').textContent='aus';
+    $('kVal').className='v flat';
+    $('kValS').textContent='optional';
+  }
+  const o=b.overload;
+  if(o){
+    $('kOver').textContent=fmt((o.max_exceedance_prob||0)*100,1)+' %';
+    $('kOver').className='v '+((o.hours_at_risk||0)?'warn':'flat');
+    $('kOverS').textContent=(o.hours_at_risk||0)+' Risikostunden, '+fmt(o.expected_overload_kwh_total,1)+' kWh erwartet';
+  }else{
+    $('kOver').textContent='aus';
+    $('kOver').className='v flat';
+    $('kOverS').textContent='Asset-Rating optional';
+  }
+  const hc=b.hosting_capacity;
+  if(hc){
+    $('kHost').textContent=fmt(hc.hosting_capacity_kw,0)+' kW';
+    $('kHost').className='v '+(hc.already_at_risk?'warn':'flat');
+    $('kHostS').textContent=hc.already_at_risk?'bereits ueber Risikoschwelle':'bindende Stunde '+hc.binding_hour;
+  }else{
+    $('kHost').textContent='-';
+    $('kHost').className='v flat';
+    $('kHostS').textContent='';
+  }
+  drawChart(b.forecast, c, rf?rf.forecast:null);
+  renderTrackRecord(b.track_record);   // T51
+  const fp=b.fahrplan;
+  if(fp){ $('fpCard').classList.remove('hidden');
+    $('fpBody').innerHTML=fp.setpoints.map(s=>`<tr><td>${s.start_utc.replace('T',' ')} → ${s.end_utc.replace('T',' ')}</td><td class="num">${s.p_limit_kw} kW</td></tr>`).join('');
+    renderLoop(b);
+  } else $('fpCard').classList.add('hidden');
+  const u=encodeURIComponent(b.utility||'default');
+  $('reportLink').href='/report/'+u+'/'+encodeURIComponent(b.forecast_date);
+  loadHistory(b.utility||'default');
+}
+async function loadHistory(utility){
+  try{
+    const j=await (await fetch('/history/'+encodeURIComponent(utility))).json();
+    const ds=(j.dates||[]).slice().reverse();
+    if(!ds.length){$('histBody').textContent='Noch kein Lauf für diesen Mandanten.';return;}
+    const u=encodeURIComponent(utility);
+    $('histBody').innerHTML='<table><thead><tr><th>Prognosetag</th><th></th></tr></thead><tbody>'+
+      ds.map(d=>`<tr><td>${d}</td><td class="num"><a href="/report/${u}/${encodeURIComponent(d)}" target="_blank">Bericht</a> · <a href="/forecast/${u}/${encodeURIComponent(d)}" target="_blank">JSON</a></td></tr>`).join('')+
+      '</tbody></table>';
+  }catch(e){ $('histBody').textContent='Verlauf nicht ladbar: '+(e.message||e); }
+}
+function renderLoop(b){
+  const c=b.congestion, fp=b.fahrplan, ack=b.aemt_ack;
+  const wh=c?c.window_hours:[];
+  const win=wh.length?(wh[0]+':00–'+(wh[wh.length-1]+1)+':00'):'–';
+  const basis=c&&c.basis==='residual'?'Residuallast':'Last';
+  // Schritt 3: aEMT-Quittung
+  let s3cls='warn', s3v='ausstehend', s3s='';
+  if(ack){
+    if(ack.status==='ACCEPTED'){ s3cls='ok'; s3v='✓ angenommen'; s3s='ID '+ack.transmission_id; }
+    else { s3cls='bad'; s3v='✗ abgelehnt'; s3s=ack.reason||''; }
+  }
+  const A=`<div class="larrow">→</div>`;
+  $('loopSteps').innerHTML=
+    `<div class="lstep warn"><div class="ln">1 · Engpass erkannt</div><div class="lv">${win}</div>`+
+      `<div class="ls">${basis}-Basis · max P90 ${fmt(c?c.max_p90_mw:null,1)} MW > ${fmt(c?c.threshold_mw:null,1)} MW</div></div>`+
+    A+
+    `<div class="lstep ok"><div class="ln">2 · Fahrplan erzeugt</div><div class="lv">${fp.setpoints.length} Setpoint(s)</div>`+
+      `<div class="ls">≥ 4,2 kW erzwungen · ${fp.malo}</div></div>`+
+    A+
+    `<div class="lstep ${s3cls}"><div class="ln">3 · aEMT-Übergabe</div><div class="lv">${s3v}</div>`+
+      `<div class="ls">${s3s}</div></div>`;
+}
+function drawChart(hours,cong,residual){
+  const W=960,H=300,pad={l:54,r:12,t:12,b:26},n=24;
+  const p10=hours.map(h=>h.p10),p50=hours.map(h=>h.p50),p90=hours.map(h=>h.p90);
+  const rp50=residual?residual.map(h=>h.p50):null;
+  let all=p90.concat(p10); if(rp50)all=all.concat(rp50);
+  const lo=Math.min(...all),hi=Math.max(...all),rng=(hi-lo)||1;
+  const x=i=>pad.l+(W-pad.l-pad.r)*i/(n-1),y=v=>pad.t+(H-pad.t-pad.b)*(1-(v-lo)/rng);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const band=path(p90)+' '+p10.slice().reverse().map((v,i)=>'L'+x(n-1-i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')+' Z';
+  let cbg='';
+  if(cong){const hrs=cong.window_hours;cbg=`<rect x="${x(hrs[0]).toFixed(1)}" y="${pad.t}" width="${(x(hrs[hrs.length-1])-x(hrs[0])).toFixed(1)}" height="${H-pad.t-pad.b}" fill="#e0a23b" fill-opacity="0.12"/>`;}
+  let zero='';
+  if(lo<0&&hi>0){const yy=y(0).toFixed(1);zero=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#5b6b7d" stroke-dasharray="4 3"/>`;}
+  let grid='';const step=niceStep(rng/4);for(let t=Math.ceil(lo/step)*step;t<=hi;t+=step){const yy=y(t).toFixed(1);
+    grid+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#2b3a4d"/><text x="6" y="${(+yy+4)}" fill="#93a4b8" font-size="11" font-family="monospace">${axis(t)}</text>`;}
+  let xl='';[0,6,12,18,23].forEach(i=>{xl+=`<text x="${x(i).toFixed(1)}" y="${H-8}" fill="#93a4b8" font-size="11" text-anchor="middle">${String(i).padStart(2,'0')}h</text>`;});
+  const residLine=rp50?`<path d="${path(rp50)}" fill="none" stroke="#e0a23b" stroke-width="2.2" stroke-dasharray="6 3"/>`:'';
+  $('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet">${cbg}${grid}${zero}<path d="${band}" fill="#4d9fff" fill-opacity="0.18"/><path d="${path(p50)}" fill="none" stroke="#36c1a6" stroke-width="2.4"/>${residLine}${xl}</svg>`;
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x)));const f=x/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+function axis(t){const a=Math.abs(t);return a>=1000?(t/1000).toFixed(a>=1e4?0:1)+'k':(''+Math.round(t*10)/10);}
+function fmtEUR(v){return (v==null||isNaN(v))?'–':Math.round(v).toLocaleString('de-DE')+' EUR';}
+
+// T51: Live-Track-Record (hash-verkettete vorab ausgegebene Prognosen vs. Ist)
+function renderTrackRecord(tr){
+  const badge=$('tChainBadge'); const empty=$('trackEmpty'); const body=$('trackBody');
+  if(!tr){ empty.classList.remove('hidden'); body.classList.add('hidden'); badge.classList.add('hidden'); return; }
+  empty.classList.add('hidden'); body.classList.remove('hidden'); badge.classList.remove('hidden');
+  badge.textContent = tr.chain_ok ? 'Hash-Kette OK' : 'Kette manipuliert';
+  badge.className = 'pill ' + (tr.chain_ok ? 'ok' : 'bad');
+  const agg = tr.aggregate;
+  if(agg){
+    $('tMae').textContent = fmt(agg.mae_mean,3);
+    $('tMaeS').textContent = 'Bias ⌀ '+fmt(agg.bias_mean,3);
+    $('tCov').textContent = fmt(agg.coverage_mean_pct,1)+' %';
+  } else {
+    $('tMae').textContent = '–'; $('tMaeS').textContent = 'noch keine realisierten Tage';
+    $('tCov').textContent = '–';
+  }
+  $('tN').textContent = (tr.n_realized||0);
+  $('tNS').textContent = (tr.n_pending||0)+' pending, '+(tr.n_forecasts_stored||0)+' im Store';
+  const days = tr.last_30_days || [];
+  $('tDays').innerHTML = days.map(d=>(
+    `<tr><td>${d.target_date}</td><td>${(d.issued_at_utc||'').replace('T',' ').slice(0,16)}</td>`+
+    `<td class="num">${fmt(d.mae,3)}</td><td class="num">${fmt(d.bias,3)}</td>`+
+    `<td class="num">${fmt(d.coverage_p10_p90_pct,1)}</td></tr>`
+  )).join('');
+}
+</script>
+</body>
+</html>

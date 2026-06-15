@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetzPilot — Cockpit</title>
+<style>
+  :root{
+    --bg:#0f1620; --panel:#17202c; --panel2:#1d2937; --line:#2b3a4d;
+    --ink:#e8eef5; --muted:#93a4b8; --accent:#36c1a6; --accent2:#4d9fff;
+    --warn:#e0a23b; --bad:#e0614d; --good:#36c1a6; --band:#4d9fff;
+    --radius:14px; --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0f1620,#0c121a);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+  header.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px}
+  .logo{font-size:26px;font-weight:700;letter-spacing:.3px}
+  .logo span{color:var(--accent)}
+  .tag{color:var(--muted);font-size:14px}
+  .pill{margin-left:auto;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:34px 0 14px;font-weight:600}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:760px){.g3,.g2,.g4{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .kpi .v{font-size:30px;font-weight:700}
+  .kpi .l{color:var(--muted);font-size:13px;margin-top:2px}
+  .kpi .s{font-size:12px;margin-top:8px}
+  .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
+  .hero{background:linear-gradient(135deg,#17313a,#192536);border:1px solid #28505c}
+  .hero .v{font-size:38px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+  .tagreal{color:var(--good);font-weight:600} .tagsynth{color:var(--warn)} .tagmodel{color:var(--accent2)}
+  .muted{color:var(--muted)} .small{font-size:12.5px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:10px}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+  .note{font-size:12.5px;color:var(--muted);margin-top:10px;border-left:3px solid var(--line);padding-left:12px}
+  .honest{background:var(--panel2);border:1px dashed #3a4f66}
+  .honest h3{margin:0 0 8px;font-size:14px;color:var(--warn)}
+  ul.tight{margin:6px 0 0;padding-left:18px} ul.tight li{margin:5px 0;font-size:13.5px}
+  footer{margin-top:40px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:12px}
+  .bars{display:flex;align-items:flex-end;gap:7px;height:120px;margin-top:8px}
+  .bar{flex:1;background:linear-gradient(180deg,var(--accent2),#2c6cb0);border-radius:5px 5px 0 0;position:relative;min-height:3px}
+  .bar.thr{background:linear-gradient(180deg,var(--warn),#9c6f1f)}
+  .bar .cap{position:absolute;top:-17px;left:0;right:0;text-align:center;font-size:9px;color:var(--muted)}
+  .axis{display:flex;gap:7px;margin-top:4px} .axis div{flex:1;text-align:center;font-size:9px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="logo">Netz<span>Pilot</span></div>
+    <div class="tag">Day-ahead-Prognose &amp; §14a-Koordination für kleine Stadtwerke</div>
+    <div class="pill">Forschungsstand · Engine-Cockpit (kein Produktiv-UI)</div>
+  </header>
+  <p class="muted small" style="margin:6px 0 0">
+    Alle Zahlen sind <b>selbst verifiziert</b> (leakage-sicherer Rolling-Origin-Backtest, Baselines Pflicht).
+    Stand 2026-05-30. Werte mit <span class="tagreal">echt</span> stammen aus gemessenen Daten,
+    <span class="tagsynth">synthetisch</span>/<span class="tagmodel">modelliert</span> sind klar markiert.
+  </p>
+
+  <!-- HERO: erstes echtes Stadtwerk -->
+  <h2>Erster Nachweis auf echten Stadtwerk-Daten — Stadtwerke Hilden (öffentlich)</h2>
+  <div class="grid g4">
+    <div class="card kpi hero">
+      <div class="v">4,36&thinsp;%</div><div class="l">MAPE · Hilden Netzumsatz 2025</div>
+      <div class="s up">gemessene Last · ⌀ 29,2 MW</div>
+    </div>
+    <div class="card kpi">
+      <div class="v up">+16,5&thinsp;%</div><div class="l">Skill vs. saisonal-naiv</div>
+      <div class="s flat">+40,2 % vs. Persistenz</div>
+    </div>
+    <div class="card kpi">
+      <div class="v">74 / 85&thinsp;%</div><div class="l">CQR-Coverage 80 / 90</div>
+      <div class="s flat">kalibrierte P10–P90-Bänder</div>
+    </div>
+    <div class="card kpi">
+      <div class="v">~2.242</div><div class="l">MWh/Jahr weniger Fehler-Energie</div>
+      <div class="s flat">vs. saisonal-naiv (Proxy)</div>
+    </div>
+  </div>
+  <p class="note">
+    <b>Ehrlich:</b> Netzumsatz = gemessener Netzdurchsatz (echte Last), öffentlich nach §12/§23c — kein NDA.
+    Es ist ein Durchsatz-/Restprofil, nicht die volle kundeneigene RLM-Netzlast. Der €-Wert ist ein
+    transparenter Proxy bis zur realen reBAP-/Bilanzkreis-Abrechnung.
+  </p>
+
+  <!-- FORECAST CHART -->
+  <h2>Day-ahead-Prognose mit kalibrierten Unsicherheitsbändern</h2>
+  <div class="card">
+    <div id="fcChart"></div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--accent)"></span>P50 (Punktprognose)</span>
+      <span><span class="sw" style="background:var(--band);opacity:.35"></span>P10–P90-Band (kalibriert)</span>
+      <span class="muted">Echte Engine-Ausgabe (nationale Tageslast 2024-03-25, MW) · <code>forecast_next_day.json</code></span>
+    </div>
+    <p class="note">Der Mehrwert ist nicht nur die Punktprognose, sondern das <b>belastbare Band</b>:
+    Coverage wird gemessen (nicht angenommen) und gilt stadtweit über 50 Profile innerhalb ±5 pp.</p>
+  </div>
+
+  <!-- RESULTS ACROSS SCALES -->
+  <h2>Genauigkeit über Last-Skalen (verifiziert)</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Ebene</th><th>Datenart</th><th class="num">MAPE</th><th class="num">Skill vs. S-Naiv</th><th class="num">Coverage 80/90</th></tr></thead>
+      <tbody>
+        <tr><td>Nationale Last (SMARD, 2 J)</td><td><span class="tagreal">echt</span></td><td class="num">3,36 %</td><td class="num up">+55,8 %</td><td class="num">81 / 88 %</td></tr>
+        <tr><td>Hilden Netzumsatz 2025</td><td><span class="tagreal">echt</span></td><td class="num">4,36 %</td><td class="num up">+16,5 %</td><td class="num">74 / 85 %</td></tr>
+        <tr><td>50 Stadt-Profile (Median)</td><td><span class="tagmodel">modelliert</span></td><td class="num">6,67 %</td><td class="num up">+3,9 %</td><td class="num">80 / 90 %</td></tr>
+        <tr><td>Hilden DBA (Bilanzkreis, signiert)</td><td><span class="tagreal">echt</span></td><td class="num muted">n/a*</td><td class="num up">+24,5 %</td><td class="num">73 / 84 %</td></tr>
+        <tr><td>Hilden SLP-Summenlast</td><td><span class="tagsynth">synthetisch</span></td><td class="num muted">1,76 %†</td><td class="num muted">+34,0 %†</td><td class="num">77 / 84 %</td></tr>
+      </tbody>
+    </table>
+    <p class="note">*Signierte Reihen mit Nulldurchgängen → MAPE unbrauchbar, Skill/MAE maßgeblich.
+    † SLP-Summenlast ist die Summe der BDEW-Standardlastprofile (quasi-deterministisch) — MAPE liegt sogar
+    <i>unter</i> der nationalen gemessenen Last, also „zu leicht". <b>Kein</b> Beleg echter Prognosegüte.</p>
+  </div>
+
+  <!-- §14a -->
+  <h2>§14a-Steuerkreis — Engpass-Fahrplan (Prototyp-Simulation)</h2>
+  <div class="card">
+    <div class="g2 grid" style="align-items:center">
+      <div>
+        <div id="schedChart"></div>
+        <div class="axis" id="schedAxis"></div>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--accent2)"></span>Wallbox normal (11 kW)</span>
+          <span><span class="sw" style="background:var(--warn)"></span>gedrosselt im Engpassfenster (4,2 kW)</span>
+        </div>
+      </div>
+      <div>
+        <p class="small">NetzPilot erkennt aus der Prognose ein Engpassfenster (hier 17–19 Uhr) und erzeugt
+        einen §14a-konformen Fahrplan. Der zertifizierte White-Label-aEMT setzt die Wirkleistungsgrenze
+        durch; das HEMS drosselt die steuerbare Verbrauchseinrichtung.</p>
+        <ul class="tight">
+          <li><b>4,2 kW Mindestleistung</b> wird stets eingehalten.</li>
+          <li>Illegale Fahrpläne (&lt; 4,2 kW) werden vom aEMT mit <code>HTTP 422</code> abgelehnt.</li>
+          <li>End-to-end in der Sandbox demonstriert (Mock-aEMT → HEMS → Wallbox).</li>
+        </ul>
+        <p class="note">Simulation — keine echte SMGW-/Smart-Meter-Anbindung. Produktiv nur über
+        zertifizierten White-Label-aEMT.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEATHER ARC (honest) -->
+  <h2>Wetter-Hebel — ehrlich entzaubert</h2>
+  <div class="grid g4">
+    <div class="card kpi"><div class="v down">geleakt</div><div class="l">T10 „+17,9 %"</div><div class="s flat">2017-Wetter = Ist-Wetter (bit-identisch zu ERA5)</div></div>
+    <div class="card kpi"><div class="v flat">≈ 0</div><div class="l">T11 · 50 synth. Städte</div><div class="s flat">−0,5 pp Median-Lift</div></div>
+    <div class="card kpi"><div class="v flat">≈ 0</div><div class="l">T12 · HEAPO echt</div><div class="s flat">−0,15 pp, leakage-sicher</div></div>
+    <div class="card kpi"><div class="v flat">+0,6 pp</div><div class="l">T13 · Wärmepumpe per-Station</div><div class="s flat">nicht signifikant (p=0,11)</div></div>
+  </div>
+  <p class="note">Befund: Lokales Wetter ist <b>kein Produkt-Moat</b> — leakage-sicher höchstens ein kleiner,
+  (noch) nicht signifikanter Bonus auf temperaturgekoppelter Last. Der Wert liegt in Prognose-Wedge,
+  Kalibrierung und §14a-Koordination. (Wir haben unsere eigene Leakage gefunden und bewiesen.)</p>
+
+  <!-- HONEST LIMITS -->
+  <h2>Wo wir stehen</h2>
+  <div class="card honest">
+    <h3>Ehrliche Grenzen (bewusst prominent)</h3>
+    <ul class="tight">
+      <li>Validierte <b>Engine + CLI</b> — noch <b>kein</b> Produktiv-Dienst/UI (dieses Cockpit visualisiert Ergebnisse).</li>
+      <li>Noch <b>keine kundeneigene</b> volle RLM-Netzlast + reale reBAP-Kosten → €-Nutzen bleibt Proxy.</li>
+      <li>§14a ist <b>Simulation</b>, nicht an echten aEMT/SMGW angebunden.</li>
+      <li>50 Stadt-Profile sind <b>modelliert</b> (validieren die Pipeline, nicht reale Performance).</li>
+      <li>Kein Hosting/ISO-27001/DSGVO-Setup.</li>
+    </ul>
+    <p class="note" style="margin-top:12px"><b>Nächster echter Schritt:</b> ein Pilot-Stadtwerk mit ≥1 Jahr
+    15-min-RLM-Netzlast + realer reBAP-Abrechnung → belastbare €-Nutzenrechnung auf <i>seinen</i> Zahlen.</p>
+  </div>
+
+  <footer>
+    NetzPilot · Reproduzierbar via <code>scripts/pilot_in_a_box.py</code> · Voller Bericht: <code>NetzPilot_Ergebnisbericht.md</code><br>
+    Quellen: SMARD · Stadtwerke Hilden &amp; EAM Netz (§12/§23c-Veröffentlichungspflicht) · HEAPO (Zenodo) · Open-Meteo Historical-Forecast.
+  </footer>
+</div>
+
+<script>
+// Echte Engine-Ausgabe aus data_cache/forecast_next_day.json (Tag 2024-03-25, nationale Last in MW)
+const fc = {
+  p10:[42354.2,41520.4,41414.9,41775.2,43460.9,46405.5,53495.2,58470.5,61489.4,62719.8,63575.6,63205.0,62769.0,61152.1,59819.8,59014.5,58641.5,60229.5,62555.4,62938.0,59584.9,56053.7,52835.6,49335.5],
+  p50:[44516.6,43395.4,42942.2,43378.9,45042.9,48711.8,55538.9,60348.3,63716.6,64963.7,65558.9,65673.8,65311.9,63628.6,62640.3,61492.8,60790.3,61995.1,64339.5,64385.5,60978.1,57649.4,54487.9,51144.9],
+  p90:[46781.0,45722.6,45440.8,45679.9,47123.7,50906.2,58509.4,63584.3,67137.2,68151.2,68981.5,68685.6,68610.2,67102.4,65888.3,64067.9,62823.4,63691.4,65998.8,66232.9,62716.4,59420.8,56336.4,53109.8]
+};
+(function drawForecast(){
+  const W=1000,H=300,pad={l:46,r:14,t:14,b:26};
+  const all=fc.p10.concat(fc.p90), lo=Math.min(...all), hi=Math.max(...all);
+  const n=fc.p50.length;
+  const x=i=>pad.l+(W-pad.l-pad.r)*i/(n-1);
+  const y=v=>pad.t+(H-pad.t-pad.b)*(1-(v-lo)/(hi-lo));
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const band=path(fc.p90)+' '+fc.p10.slice().reverse().map((v,i)=>'L'+x(n-1-i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')+' Z';
+  let grid='',ticks=[35000,40000,45000,50000,55000];
+  ticks.forEach(t=>{ if(t<lo||t>hi)return; const yy=y(t).toFixed(1);
+    grid+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#2b3a4d" stroke-width="1"/>`;
+    grid+=`<text x="6" y="${(+yy+4)}" fill="#93a4b8" font-size="11" font-family="monospace">${(t/1000)} GW</text>`; });
+  let xlab=''; [0,4,8,12,16,20,23].forEach(i=>{ xlab+=`<text x="${x(i).toFixed(1)}" y="${H-8}" fill="#93a4b8" font-size="11" text-anchor="middle">${String(i).padStart(2,'0')}h</text>`; });
+  document.getElementById('fcChart').innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Day-ahead Prognose mit P10-P90 Band">
+      ${grid}
+      <path d="${band}" fill="#4d9fff" fill-opacity="0.18" stroke="none"/>
+      <path d="${path(fc.p50)}" fill="none" stroke="#36c1a6" stroke-width="2.4"/>
+      ${xlab}
+    </svg>`;
+})();
+(function drawSchedule(){
+  const base=11, minp=4.2, congest=new Set([17,18]); // 17-19 Uhr Fenster
+  let bars='',axis='';
+  for(let h=0;h<24;h++){
+    const thr=congest.has(h);
+    const kw=thr?minp:base;
+    const ht=Math.round(kw/base*100);
+    bars+=`<div class="bar ${thr?'thr':''}" style="height:${ht}%" title="${h}:00 → ${kw} kW"><span class="cap">${thr?'4,2':''}</span></div>`;
+    axis+=`<div>${(h%3===0)?String(h).padStart(2,'0'):''}</div>`;
+  }
+  document.getElementById('schedChart').innerHTML='<div class="bars">'+bars+'</div>';
+  document.getElementById('schedAxis').innerHTML=axis;
+})();
+</script>
+</body>
+</html>

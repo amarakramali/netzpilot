@@ -1,0 +1,53 @@
+{
+  "experiment": "balancing-group day-ahead nomination under asymmetric imbalance cost",
+  "data": "SMARD Netzlast DE, hourly (real)",
+  "period": "2024-01-01..2024-03-24",
+  "test_days": 28,
+  "test_hours": 672,
+  "base_price_c_long_EUR_per_MWh": 15.0,
+  "leakage_safe": "rolling-origin; per-hour residual quantiles use only days < d",
+  "results": [
+    {
+      "ratio_cshort_over_clong": 1.0,
+      "tau": 0.5,
+      "cost_det_EUR": 14371678,
+      "cost_sto_EUR": 14371678,
+      "saving_EUR_testperiod": 0,
+      "saving_pct": 0.0
+    },
+    {
+      "ratio_cshort_over_clong": 1.5,
+      "tau": 0.6,
+      "cost_det_EUR": 18275816,
+      "cost_sto_EUR": 17752778,
+      "saving_EUR_testperiod": 523038,
+      "saving_pct": 2.86
+    },
+    {
+      "ratio_cshort_over_clong": 2.0,
+      "tau": 0.667,
+      "cost_det_EUR": 22179954,
+      "cost_sto_EUR": 20375179,
+      "saving_EUR_testperiod": 1804775,
+      "saving_pct": 8.14
+    },
+    {
+      "ratio_cshort_over_clong": 3.0,
+      "tau": 0.75,
+      "cost_det_EUR": 29988230,
+      "cost_sto_EUR": 24044297,
+      "saving_EUR_testperiod": 5943932,
+      "saving_pct": 19.82
+    },
+    {
+      "ratio_cshort_over_clong": 5.0,
+      "tau": 0.833,
+      "cost_det_EUR": 45604782,
+      "cost_sto_EUR": 28329621,
+      "saving_EUR_testperiod": 17275160,
+      "saving_pct": 37.88
+    }
+  ],
+  "reading": "saving_pct = realized euro reduction from nominating the cost-optimal quantile instead of the median. ~0 at ratio=1 (symmetric) by construction; should grow with asymmetry if the forecast quantiles are usable.",
+  "caveat": "ABSOLUTE euro figures reflect Germany-wide balancing volume and are illustrative only - NOT a NetzPilot revenue figure. The transferable result is saving_pct, which is INVARIANT to error magnitude and is set by the error distribution SHAPE (skew/tails) x cost asymmetry (see residual_shape_sensitivity.py). Confirm shape + real reBAP asymmetry on customer data."
+}

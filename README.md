@@ -1,0 +1,80 @@
+# NetzPilot
+
+**Leakage-sichere Last-, Erzeugungs- und Residuallastprognose für kleine deutsche Stadtwerke — mit §14a-EnWG-Steuerung, Bilanzkreis-Ökonomie und operativem Cockpit.**
+
+> ⚠️ **Privates, proprietäres Projekt.** Siehe [LICENSE](LICENSE) — alle Rechte vorbehalten, keine Nutzung ohne ausdrückliche Genehmigung.
+
+---
+
+## Was ist NetzPilot?
+
+NetzPilot erstellt **Day-ahead- und Mehrtages-Prognosen** (D+1…D+3) für die Netzlast kleiner deutscher Verteilnetzbetreiber — mit kalibrierten Unsicherheitsbändern (P10/P50/P90), streng leakage-sicher (rolling-origin, Pflicht-Baselines) und auf echten DSO-Lastgängen validiert. Darauf aufbauend liefert es die **§14a-EnWG-Steuerkette** (faire Abregelung, Re-Dispatch, zeitvariables Netzentgelt, VPP-Pool), die **Bilanzkreis-Ökonomie** (reBAP/Spot) und ein **bedienbares Cockpit**.
+
+## Kernfunktionen
+
+- **Prognose** — Day-ahead & D+1…D+3 mit kalibrierten P10/P50/P90-Bändern und Intraday-Resttag-Korrektur; leakage-sicher (rolling-origin, Saisonal-Naiv als Pflicht-Baseline).
+- **§14a-EnWG-Koordination** — faire, minimale Abregelung (Water-Filling), rollierender Re-Dispatch, zeitvariables Netzentgelt (Modul 3), VPP-Pool.
+- **§14a-Compliance** — Monats-Meldebogen (VNBdigital-Pflichtfelder) + Diskriminierungsfreiheits-Nachweis aus einem hash-verketteten Eingriffs-Ledger.
+- **Bilanzkreis-Ökonomie** — realisierte reBAP-/Spot-Abrechnung mit Unsicherheitsband statt Plakatzahl.
+- **Daten-Eingang** — robuster CSV-/Excel-Loader und MSCONS-Leser (EDIFACT-Lastgang, read-only).
+- **Bedienung** — Single-File-Cockpit (`/cockpit`), druckbarer Ergebnisbericht mit Live-Track-Record, täglicher SMARD-Live-Lauf, Blind-Challenge-Sofort-Backtest (~15 s).
+
+## Schnellstart
+
+**Ein Doppelklick — echte Software mit Oberfläche:**
+
+- **Windows:** Doppelklick auf `Start_NetzPilot.bat`
+- **macOS/Linux:** `./start_netzpilot.sh`
+
+Der Starter richtet beim ersten Mal automatisch alles ein (virtuelle Umgebung + Pakete), startet das Python-Backend (`netzpilot/service`) und öffnet <http://127.0.0.1:8000/>. Dort einen CSV-Lastgang hochladen → Day-ahead-Prognose mit kalibrierten Bändern + §14a-Fahrplan, gerechnet von der echten Engine. **Voraussetzung:** Python 3.10–3.12.
+
+> Die Dateien `NetzPilot_Tool.html` / `NetzPilot_Cockpit.html` sind nur Offline-Schaufenster ohne Backend.
+
+**Manuell / Entwicklung:**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+python -m pytest -q
+```
+
+**Konsolidierter Selbsttest** (alle Unit-/Leakage-/Integrationstests + UI-Harness):
+
+```powershell
+python scripts\run_all_checks.py
+```
+
+## Ergebnisse (Auszug)
+
+- Auf **46 echten DSO-Lastreihen** in **44 von 46** Fällen signifikant besser als die naive Vorwochen-Regel.
+- **Erstes echtes Stadtwerk** (Hilden SLP-Summenlast 2025): MAPE **1,76 %**, Skill **+34,0 %** vs. Saisonal-Naiv.
+- **Nationale Last** (2-Jahres-Cache): MAPE **3,36 %**, Skill **+55,8 %** vs. Saisonal-Naiv.
+- **§14a-Re-Dispatch** (3 echte DSO-Reihen): im Mittel **74,3 % weniger Abregelenergie** als pauschale Dauerdimmung bei gehaltener Netzgrenze.
+
+➡️ Vollständige Entwicklungs-Historie (T2–T44), alle Messwerte, Artefakt-Pfade und Methodik-Details: **[ENTWICKLUNG.md](ENTWICKLUNG.md)**.
+
+## Methodische Grundregeln
+
+Kein Leakage: Wetter im Backtest ist Open-Meteo *Historical Forecast*, nie Reanalyse/Ist-Wetter. Baselines bleiben immer dabei. Rolling-Origin statt k-fold. DST und Feiertage werden berücksichtigt. Schwache Ergebnisse werden dokumentiert statt schöngerechnet.
+
+## Projektstruktur
+
+```text
+netzpilot/
+  data/       SMARD, Open-Meteo, Residual-/Erzeugungs-/Small-Utility-Daten, reBAP/Spot
+  features/   leakage-sichere Features
+  models/     Baselines, Ridge, LightGBM-Quantile
+  eval/       Metriken, Rolling-Origin, CQR, Economics, Bilanzkreis
+  control/    §14a-Steuerkette: Re-Dispatch, Risiko/CVaR, EEBUS-LPC, VPP-Pool
+  grid/       Netz-/Asset-Thermik (IEC 60076-7)
+  service/    FastAPI-Backend, Cockpit, Drift-Monitor, Tarif, Dispatch
+  report/     HTML-/Markdown-Bericht
+scripts/              reproduzierbare Läufe
+tests/                Unit-/Leakage-/Integritätstests
+prognose_engine_v1/   eingefrorenes v1-Beispiel (mit Beispieldaten für die Tests)
+```
+
+## Lizenz
+
+Proprietär — alle Rechte vorbehalten, siehe [LICENSE](LICENSE). Das Klonen oder Einsehen dieses privaten Repositorys begründet keinerlei Nutzungs- oder Verwertungsrechte. Für Lizenz-, Pilot- oder Kooperationsanfragen den Rechteinhaber kontaktieren.

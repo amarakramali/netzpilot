@@ -1,0 +1,9 @@
+# NetzPilot — nur Laufzeit-Abhängigkeiten des REST-Dienstes (schlanker Container).
+# Die Kern-Engine (Prognose + §14a + Residuallast + Economics) braucht nur numpy/pandas;
+# lightgbm/pvlib/mapie etc. (aus requirements.txt) sind für den Dienstbetrieb NICHT nötig.
+numpy>=1.26
+pandas>=2.1
+holidays>=0.45
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9

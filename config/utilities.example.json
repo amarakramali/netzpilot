@@ -1,0 +1,36 @@
+[
+  {
+    "utility": "Beispiel-Stadtwerk (SLP-Summenlast)",
+    "csv": "data_cache/real/<lastgang>.csv",
+    "unit": "kW",
+    "region": "NW",
+    "ts_col": null,
+    "load_col": null,
+    "congestion_threshold_mw": 45,
+    "rating_kw": null,
+    "steuve_malo": "DE0001234567890",
+    "submit_to_aemt": false,
+    "aemt_adapter": "mock",
+    "mmm_price_eur_mwh": null,
+    "pool_assets": null,
+    "pool_shared_cap_kw": null,
+    "rebap_csv": "data_cache/real/rebap_2024.csv",
+    "spot_csv": "data_cache/real/spot_da_2024.csv"
+  },
+  {
+    "utility": "Beispiel mit Erzeugung",
+    "csv": "data_cache/real/<lastgang>.csv",
+    "unit": "MW",
+    "region": "NI",
+    "ts_col": null,
+    "load_col": null,
+    "congestion_threshold_mw": 12,
+    "steuve_malo": null,
+    "rebap_csv": "data_cache/real/rebap_2024.csv",
+    "spot_csv": "data_cache/real/spot_da_2024.csv",
+    "generation_csv": "data_cache/real/<erzeugung_pv_wind>.csv",
+    "generation_unit": "MW",
+    "generation_ts_col": null,
+    "generation_load_col": null
+  }
+]

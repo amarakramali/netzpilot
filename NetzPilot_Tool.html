@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetzPilot — Lastgang-Tool</title>
+<style>
+  :root{--bg:#0f1620;--panel:#17202c;--panel2:#1d2937;--line:#2b3a4d;--ink:#e8eef5;--muted:#93a4b8;
+    --accent:#36c1a6;--accent2:#4d9fff;--warn:#e0a23b;--bad:#e0614d;--good:#36c1a6;--radius:14px;
+    --mono:ui-monospace,Menlo,Consolas,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:linear-gradient(180deg,#0f1620,#0c121a);color:var(--ink);font-family:var(--sans);line-height:1.5}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 60px}
+  header.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:18px}
+  .logo{font-size:25px;font-weight:700}.logo span{color:var(--accent)}
+  .tag{color:var(--muted);font-size:14px}.pill{margin-left:auto;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:5px 11px}
+  h2{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:30px 0 12px;font-weight:600}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .drop{border:2px dashed #34506b;border-radius:var(--radius);padding:30px;text-align:center;cursor:pointer;transition:.15s;background:var(--panel)}
+  .drop.hover{border-color:var(--accent);background:#16242e}.drop b{color:var(--accent)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  label.fld{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  input,select{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:14px;font-family:var(--sans)}
+  input[type=text]{width:140px}
+  button{background:var(--accent);color:#04110d;border:0;border-radius:9px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(4,1fr)}@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .kpi .v{font-size:27px;font-weight:700}.kpi .l{color:var(--muted);font-size:12.5px;margin-top:2px}.kpi .s{font-size:11.5px;margin-top:6px}
+  .up{color:var(--good)}.down{color:var(--bad)}.flat{color:var(--muted)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:10px}
+  .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+  .note{font-size:12.5px;color:var(--muted);margin-top:10px;border-left:3px solid var(--line);padding-left:12px}
+  .err{color:var(--bad);font-size:13.5px;margin-top:12px}
+  .hidden{display:none}.muted{color:var(--muted)}.small{font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+  td,th{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11.5px;text-transform:uppercase}
+  td.num{text-align:right;font-family:var(--mono)}
+  .busy{color:var(--accent);font-size:13.5px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">Netz<span>Pilot</span></div>
+    <div class="tag">Lastgang-Tool — CSV rein, ehrlicher Day-ahead-Backtest raus</div>
+    <div class="pill">läuft offline · engine-treu</div>
+  </header>
+
+  <h2>1 · Lastgang laden</h2>
+  <div class="card">
+    <div id="drop" class="drop">
+      <p style="margin:0 0 6px"><b>CSV hier ablegen</b> oder klicken zum Auswählen</p>
+      <p class="small muted" style="margin:0">Erwartet eine Zeit- und eine Lastspalte. Erkennt automatisch
+      ISO (<code>2025-01-01 00:15</code>) und deutsches Format (<code>01.01.2025 00:15 Mi</code>),
+      <code>;</code>/<code>,</code>-Trenner und Dezimalkomma. 15-min oder stündlich.</p>
+      <input id="file" type="file" accept=".csv,text/csv" class="hidden">
+    </div>
+    <div class="row">
+      <label class="fld">Einheit der Werte
+        <select id="unit"><option value="MW">MW</option><option value="kW" selected>kW</option><option value="W">W</option></select></label>
+      <label class="fld">Zeitspalte (optional)<input id="tsCol" type="text" placeholder="auto"></label>
+      <label class="fld">Lastspalte (optional)<input id="loadCol" type="text" placeholder="auto"></label>
+      <label class="fld">Testtage<select id="nTest"><option>7</option><option>14</option><option selected>28</option></select></label>
+      <button id="run" disabled>Rechnen</button>
+    </div>
+    <div id="fileinfo" class="small muted" style="margin-top:10px"></div>
+    <div id="busy" class="busy hidden">Rechne engine-treuen Rolling-Origin-Backtest …</div>
+    <div id="err" class="err hidden"></div>
+  </div>
+
+  <div id="results" class="hidden">
+    <h2>2 · Ergebnis (leakage-sicherer Rolling-Origin-Backtest, engine-treu)</h2>
+    <div class="grid">
+      <div class="card kpi"><div class="v" id="kMape">–</div><div class="l">MAPE</div><div class="s flat" id="kMean"></div></div>
+      <div class="card kpi"><div class="v up" id="kSnv">–</div><div class="l">Skill vs. saisonal-naiv</div><div class="s flat" id="kPers"></div></div>
+      <div class="card kpi"><div class="v" id="kCov">–</div><div class="l">Coverage 80 / 90</div><div class="s flat">Soll 80 / 90 %</div></div>
+      <div class="card kpi"><div class="v" id="kMae">–</div><div class="l">MAE</div><div class="s flat" id="kMase"></div></div>
+    </div>
+
+    <h2>3 · Letzter Testtag — Prognose mit Band</h2>
+    <div class="card">
+      <div id="chart"></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--ink)"></span>Ist</span>
+        <span><span class="sw" style="background:var(--accent)"></span>Prognose P50</span>
+        <span><span class="sw" style="background:var(--accent2);opacity:.4"></span>P10–P90-Band</span>
+        <span class="muted" id="chartDate"></span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <table><thead><tr><th>Kennzahl</th><th class="num">Wert</th></tr></thead><tbody id="tbl"></tbody></table>
+    </div>
+
+    <p class="note"><b>Engine-treu:</b> dieses Tool rechnet dieselbe Methode wie die Python-Engine —
+    Ridge-Korrektor mit Tail-Schrumpfung gegen saisonal-naiv (13 Abweichungs-Features: Vorwochen-/Vortags-
+    Abweichungen, Tagesform-Harmonische, Wochentag, Wochenende/Feiertag), Bänder aus In-Sample-
+    Residuenquantilen, leakage-sicher im Rolling-Origin. <b>Verifiziert gegen die Python-Engine</b> (node):
+    Hilden Netzumsatz JS +19,5 % / MAPE 4,21 % (Engine +16,5 % / 4,36 %); Münster JS +5,3 % (Engine +3,9 %).
+    Gleiche Richtung und Größenordnung; die JS-Bänder nutzen In-Sample-Residuen statt split-conformal, daher
+    ~3 pp Differenz im Punkt-Skill. Die eingebettete Logik ist deckungsgleich mit dem Standalone-Kern
+    <code>scripts/forecast_engine_core.js</code>. Belastbare Referenz + Signifikanz/CQR:
+    <code>scripts/pilot_in_a_box.py</code>. Der €-Wert wäre erst mit realen reBAP-Kosten belastbar.</p>
+  </div>
+
+  <p class="small muted" style="margin-top:26px">Voller Kontext: <code>NetzPilot_Cockpit.html</code> (Schaubild) ·
+  <code>NetzPilot_Ergebnisbericht.md</code> (Bericht) · Engine-Code unter <code>netzpilot/</code>.</p>
+</div>
+
+<script>
+/* ===== engine-treuer Forecast-Kern (identisch zu scripts/forecast_engine_core.js) ===== */
+const WEEKDAY_RE=/[\s,;]+[A-Za-zÄÖÜäöüß.]{2,3}\.?\s*$/;
+const LOAD_HINTS=/(last|load|mw|kw|wirk|verbrauch|leistung|menge|summe|differenz|netz|dba|wert|value|p_?ges|p\s*\(kw\))/i;
+const splitLines=t=>t.replace(/\r\n?/g,'\n').split('\n').filter(l=>l.trim().length);
+function detectSep(h){const c=(h.match(/;/g)||[]).length,k=(h.match(/,/g)||[]).length,t=(h.match(/\t/g)||[]).length;if(t>=c&&t>=k)return '\t';return c>=k?';':',';}
+function parseNum(raw){if(raw==null)return NaN;let s=String(raw).trim();if(!s)return NaN;if(/\d,\d/.test(s))s=s.replace(/\./g,'').replace(',', '.');else s=s.replace(/(?<=\d)\.(?=\d{3}\b)/g,'');const v=parseFloat(s);return isFinite(v)?v:NaN;}
+function parseDate(raw){if(raw==null)return null;let s=String(raw).trim().replace(WEEKDAY_RE,'');let m=s.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/)||s.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)return{y:+m[1],mo:+m[2],d:+m[3],h:m[4]!=null?+m[4]:0};m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);if(m)return{y:+m[3],mo:+m[2],d:+m[1],h:m[4]!=null?+m[4]:0};const dt=new Date(s);if(!isNaN(dt))return{y:dt.getFullYear(),mo:dt.getMonth()+1,d:dt.getDate(),h:dt.getHours()};return null;}
+function isIndexLike(v){const x=v.filter(isFinite);if(x.length<5)return false;const st=x[1]-x[0];if(Math.abs(st)<1)return false;for(let i=1;i<x.length;i++)if(Math.abs((x[i]-x[i-1])-st)>1e-9)return false;return true;}
+const mean=a=>{let s=0,n=0;for(const v of a)if(isFinite(v)){s+=v;n++;}return n?s/n:NaN;};
+const std=a=>{const m=mean(a);let s=0,n=0;for(const v of a)if(isFinite(v)){s+=(v-m)*(v-m);n++;}return n?Math.sqrt(s/n):0;};
+const quantile=(s,q)=>{if(!s.length)return NaN;const p=(s.length-1)*Math.max(0,Math.min(1,q)),lo=Math.floor(p),hi=Math.ceil(p);return lo===hi?s[lo]:s[lo]+(s[hi]-s[lo])*(p-lo);};
+const mae=(a,b)=>{let s=0,n=0;for(let i=0;i<a.length;i++)if(isFinite(a[i])&&isFinite(b[i])){s+=Math.abs(a[i]-b[i]);n++;}return n?s/n:NaN;};
+function holidaySet(years){const set=new Set();const fixed=[[1,1],[5,1],[10,3],[11,1],[12,25],[12,26]];
+  for(const y of years){for(const [m,d] of fixed)set.add(`${y}-${m}-${d}`);
+    const a=y%19,b=Math.floor(y/100),c=y%100,d2=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d2-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,mm=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*mm+114)/31),day=((h+l-7*mm+114)%31)+1;
+    const E=Date.UTC(y,month-1,day),add=nn=>{const t=new Date(E+nn*864e5);return `${t.getUTCFullYear()}-${t.getUTCMonth()+1}-${t.getUTCDate()}`;};
+    set.add(add(-2));set.add(add(1));set.add(add(50));set.add(add(60));}
+  return set;}
+function dowOf(s){const [y,mo,d]=s.split('-').map(Number);return (new Date(Date.UTC(y,mo-1,d)).getUTCDay()+6)%7;}
+function isHol(s,hs){const [y,mo,d]=s.split('-').map(Number);return hs.has(`${y}-${mo}-${d}`)?1:0;}
+function loadCsv(text,opt){opt=opt||{};const lines=splitLines(text);if(lines.length<3)throw new Error('CSV zu kurz.');
+  const sep=detectSep(lines[0]);const header=lines[0].split(sep).map(h=>h.trim().replace(/^﻿/,''));const rows=lines.slice(1).map(l=>l.split(sep));const ncol=header.length,col=j=>rows.map(r=>r[j]);
+  let tsIdx=opt.tsCol?header.indexOf(opt.tsCol):-1;
+  if(tsIdx<0){let best=-1,bs=-1;for(let j=0;j<ncol;j++){const s=col(j);let ok=0;for(const v of s)if(parseDate(v))ok++;const sc=ok/s.length;if(sc>bs){bs=sc;best=j;}}if(bs<0.5)throw new Error('Keine Zeitstempel-Spalte erkannt.');tsIdx=best;}
+  let loadIdx=opt.loadCol?header.indexOf(opt.loadCol):-1;
+  if(loadIdx<0){const cand=[];for(let j=0;j<ncol;j++){if(j===tsIdx)continue;const nums=col(j).map(parseNum);const ok=nums.filter(isFinite).length/nums.length;if(ok>0.5&&!isIndexLike(nums)&&std(nums.filter(isFinite))>0)cand.push({j,uniq:new Set(nums.filter(isFinite)).size});}
+    if(!cand.length)throw new Error('Keine plausible Lastspalte gefunden.');const named=cand.filter(c=>LOAD_HINTS.test(header[c.j]));const pool=named.length?named:cand;pool.sort((a,b)=>b.uniq-a.uniq);loadIdx=pool[0].j;}
+  const tsRaw=col(tsIdx),loadRaw=col(loadIdx);const bk=new Map();
+  for(let i=0;i<rows.length;i++){const dt=parseDate(tsRaw[i]);const v=parseNum(loadRaw[i]);if(!dt||!isFinite(v))continue;
+    const key=`${dt.y}-${String(dt.mo).padStart(2,'0')}-${String(dt.d).padStart(2,'0')} ${String(dt.h).padStart(2,'0')}`;
+    let b=bk.get(key);if(!b){b={s:0,n:0,y:dt.y,mo:dt.mo,d:dt.d,h:dt.h};bk.set(key,b);}b.s+=v;b.n++;}
+  const unit=(opt.unit||'MW').toLowerCase(),scale=unit==='kw'?1e-3:unit==='w'?1e-6:1;
+  const keys=[...bk.keys()].sort();const hourly=keys.map(k=>{const b=bk.get(k);return{y:b.y,mo:b.mo,d:b.d,h:b.h,val:(b.s/b.n)*scale};});
+  return{hourly,tsCol:header[tsIdx],loadCol:header[loadIdx]};}
+function toDaily(hourly){const byDay=new Map();for(const r of hourly){const dk=`${r.y}-${String(r.mo).padStart(2,'0')}-${String(r.d).padStart(2,'0')}`;let a=byDay.get(dk);if(!a){a=new Array(24).fill(null);byDay.set(dk,a);}a[r.h]=r.val;}
+  const dates=[...byDay.keys()].sort();const load2d=[],days=[];for(const dk of dates){const a=byDay.get(dk);if(a.every(v=>v!=null&&isFinite(v))){load2d.push(a);days.push(dk);}}return{load2d,days};}
+function featuresForDay(load2d,d,days,hs){
+  const dev_prev=new Array(24);for(let h=0;h<24;h++)dev_prev[h]=load2d[d-1][h]-load2d[d-8][h];
+  const dev_mean=mean(dev_prev),trend=mean(load2d[d-1])-mean(load2d[d-8]);
+  const dow=dowOf(days[d]),wknd=dow>=5?1:0,hol=isHol(days[d],hs),X=[];
+  for(let h=0;h<24;h++){X.push([1.0,dev_prev[h],dev_mean,trend,load2d[d-1][h]-load2d[d-7][h],
+    Math.sin(2*Math.PI*h/24),Math.cos(2*Math.PI*h/24),Math.sin(4*Math.PI*h/24),Math.cos(4*Math.PI*h/24),
+    Math.sin(2*Math.PI*dow/7),Math.cos(2*Math.PI*dow/7),wknd,hol]);}return X;}
+function solveSPD(A,b){const F=b.length,M=A.map((r,i)=>r.concat([b[i]]));
+  for(let c=0;c<F;c++){let p=c;for(let r=c+1;r<F;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;[M[c],M[p]]=[M[p],M[c]];const d=M[c][c]||1e-12;
+    for(let r=0;r<F;r++){if(r===c)continue;const f=M[r][c]/d;for(let k=c;k<=F;k++)M[r][k]-=f*M[c][k];}}return M.map((r,i)=>r[F]/(r[i]||1e-12));}
+function ridgeFit(X,y,lam){const n=X.length,F=X[0].length,P=F-1,mu=new Array(P).fill(0),sd=new Array(P).fill(0);
+  for(let j=0;j<P;j++){let s=0;for(let i=0;i<n;i++)s+=X[i][j+1];mu[j]=s/n;}
+  for(let j=0;j<P;j++){let s=0;for(let i=0;i<n;i++){const d=X[i][j+1]-mu[j];s+=d*d;}sd[j]=Math.sqrt(s/n);if(sd[j]===0)sd[j]=1;}
+  const Xs=X.map(r=>{const o=[1.0];for(let j=0;j<P;j++)o.push((r[j+1]-mu[j])/sd[j]);return o;});
+  const A=Array.from({length:F},()=>new Array(F).fill(0));
+  for(let a=0;a<F;a++)for(let b=0;b<F;b++){let s=0;for(let i=0;i<n;i++)s+=Xs[i][a]*Xs[i][b];A[a][b]=s+(a===b?lam:0);}
+  A[0][0]-=lam;
+  const bb=new Array(F).fill(0);for(let a=0;a<F;a++){let s=0;for(let i=0;i<n;i++)s+=Xs[i][a]*y[i];bb[a]=s;}
+  return{mu,sd,w:solveSPD(A,bb)};}
+function ridgePredict(m,X){return X.map(r=>{let s=m.w[0];for(let j=0;j<m.mu.length;j++)s+=((r[j+1]-m.mu[j])/m.sd[j])*m.w[j+1];return s;});}
+function shrunkFit(X,y,lam){const n=X.length;let s=1.0;const ntail=n>48?Math.min(n-24,Math.max(24,Math.floor(n*0.2))):0;
+  if(ntail>=24){const head=n-ntail,rt=ridgeFit(X.slice(0,head),y.slice(0,head),lam),pt=ridgePredict(rt,X.slice(head)),yt=y.slice(head);
+    let bE=Infinity;for(const cand of [0,.25,.5,.75,1]){const e=mean(yt.map((v,i)=>Math.abs(v-cand*pt[i])));if(e<bE){bE=e;s=cand;}}}
+  return{ridge:ridgeFit(X,y,lam),shrink:s};}
+function shrunkPredict(m,X){const p=ridgePredict(m.ridge,X);return p.map(v=>v*m.shrink);}
+function evaluate(load2d,days,cfg){cfg=cfg||{};const first=8,nTest=cfg.nTest||28,lam=cfg.lam||10.0,n=load2d.length;
+  if(n<first+nTest+1)throw new Error(`Zu wenig vollständige Tage (${n}). Mind. ~${first+nTest+1} nötig.`);
+  const hs=holidaySet([...new Set(days.map(d=>+d.slice(0,4)))]);
+  const A=[],M=[],SN=[],PE=[],P10=[],P90=[],P05=[],P95=[];let last=null;
+  for(let d=n-nTest;d<n;d++){
+    const Xtr=[],ytr=[],baseTr=[],actTr=[];
+    for(let t=first;t<d;t++){const Xt=featuresForDay(load2d,t,days,hs);for(let h=0;h<24;h++){Xtr.push(Xt[h]);ytr.push(load2d[t][h]-load2d[t-7][h]);baseTr.push(load2d[t-7][h]);actTr.push(load2d[t][h]);}}
+    const model=shrunkFit(Xtr,ytr,lam),fitTr=shrunkPredict(model,Xtr);
+    const resByH=Array.from({length:24},()=>[]);for(let i=0;i<Xtr.length;i++)resByH[i%24].push(actTr[i]-(baseTr[i]+fitTr[i]));
+    const qf=(arr,p)=>quantile(arr.slice().sort((a,b)=>a-b),p);
+    const q10=resByH.map(a=>qf(a,.10)),q90=resByH.map(a=>qf(a,.90)),q05=resByH.map(a=>qf(a,.05)),q95=resByH.map(a=>qf(a,.95));
+    const corr=shrunkPredict(model,featuresForDay(load2d,d,days,hs)),pred=load2d[d-7].map((b,h)=>b+corr[h]);
+    const act=load2d[d],sn=load2d[d-7],pe=load2d[d-1];
+    for(let h=0;h<24;h++){A.push(act[h]);M.push(pred[h]);SN.push(sn[h]);PE.push(pe[h]);P10.push(pred[h]+q10[h]);P90.push(pred[h]+q90[h]);P05.push(pred[h]+q05[h]);P95.push(pred[h]+q95[h]);}
+    if(d===n-1)last={date:days[d],act,pred,lo90:q05.map((v,h)=>pred[h]+v),hi90:q95.map((v,h)=>pred[h]+v)};}
+  const mM=mae(A,M),mS=mae(A,SN),mP=mae(A,PE);let ap=0,na=0;for(let i=0;i<A.length;i++)if(Math.abs(A[i])>1e-9){ap+=Math.abs((A[i]-M[i])/A[i]);na++;}
+  const cov=(lo,hi)=>{let c=0;for(let i=0;i<A.length;i++)if(A[i]>=lo[i]&&A[i]<=hi[i])c++;return 100*c/A.length;};
+  return{nDays:n,nTest,meanLoad:mean(A),MAE:mM,MAPE:na?100*ap/na:NaN,MASE:mM/mS,skillSnaive:100*(1-mM/mS),skillPersist:100*(1-mM/mP),cov80:cov(P10,P90),cov90:cov(P05,P95),lastDay:last};}
+
+/* ===== UI ===== */
+const $=id=>document.getElementById(id);let csvText=null;
+const drop=$('drop'),fileInput=$('file');
+drop.onclick=()=>fileInput.click();
+drop.ondragover=e=>{e.preventDefault();drop.classList.add('hover');};
+drop.ondragleave=()=>drop.classList.remove('hover');
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove('hover');if(e.dataTransfer.files[0])readFile(e.dataTransfer.files[0]);};
+fileInput.onchange=e=>{if(e.target.files[0])readFile(e.target.files[0]);};
+function readFile(f){const r=new FileReader();r.onload=()=>{csvText=r.result;$('fileinfo').textContent=`Geladen: ${f.name} (${(f.size/1024).toFixed(0)} KB)`;$('run').disabled=false;showErr('');};r.readAsText(f);}
+function showErr(m){const e=$('err');if(m){e.textContent='⚠ '+m;e.classList.remove('hidden');}else e.classList.add('hidden');}
+const fmt=(v,d=2)=>isFinite(v)?v.toFixed(d):'–';const sgn=v=>(v>=0?'+':'')+fmt(v,1);
+$('run').onclick=()=>{
+  if(!csvText)return;showErr('');$('busy').classList.remove('hidden');$('run').disabled=true;
+  setTimeout(()=>{ try{
+    const opt={unit:$('unit').value};if($('tsCol').value.trim())opt.tsCol=$('tsCol').value.trim();if($('loadCol').value.trim())opt.loadCol=$('loadCol').value.trim();
+    const L=loadCsv(csvText,opt),D=toDaily(L.hourly),r=evaluate(D.load2d,D.days,{nTest:+$('nTest').value});
+    $('results').classList.remove('hidden');
+    $('kMape').textContent=fmt(r.MAPE,2)+' %';$('kMean').textContent='⌀ Last '+fmt(r.meanLoad,1)+' MW · '+r.nDays+' Tage';
+    const sn=$('kSnv');sn.textContent=sgn(r.skillSnaive)+' %';sn.className='v '+(r.skillSnaive>=0?'up':'down');
+    $('kPers').textContent=sgn(r.skillPersist)+' % vs. Persistenz';
+    $('kCov').textContent=fmt(r.cov80,0)+' / '+fmt(r.cov90,0)+' %';
+    $('kMae').textContent=fmt(r.MAE,2)+' MW';$('kMase').textContent='MASE '+fmt(r.MASE,3);
+    $('tbl').innerHTML=[
+      ['Spalten erkannt',`Zeit „${L.tsCol}“ · Last „${L.loadCol}“`],['Vollständige Tage',r.nDays],['Testtage (rollierend)',r.nTest],
+      ['MAPE',fmt(r.MAPE,2)+' %'],['MAE',fmt(r.MAE,2)+' MW'],['MASE vs. saisonal-naiv',fmt(r.MASE,3)],
+      ['Skill vs. saisonal-naiv',sgn(r.skillSnaive)+' %'],['Skill vs. Persistenz',sgn(r.skillPersist)+' %'],
+      ['Coverage 80 % (Soll 80)',fmt(r.cov80,1)+' %'],['Coverage 90 % (Soll 90)',fmt(r.cov90,1)+' %'],
+    ].map(([k,v])=>`<tr><td>${k}</td><td class="num">${v}</td></tr>`).join('');
+    drawChart(r.lastDay);$('chartDate').textContent='Tag: '+(r.lastDay?r.lastDay.date:'');
+    $('busy').classList.add('hidden');$('run').disabled=false;$('results').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(err){$('busy').classList.add('hidden');$('run').disabled=false;showErr(err.message||String(err));}
+  },30);
+};
+function drawChart(ld){if(!ld){$('chart').innerHTML='';return;}
+  const W=960,H=300,pad={l:54,r:12,t:12,b:26},n=24;
+  const all=ld.hi90.concat(ld.lo90,ld.act),lo=Math.min(...all),hi=Math.max(...all),rng=(hi-lo)||1;
+  const x=i=>pad.l+(W-pad.l-pad.r)*i/(n-1),y=v=>pad.t+(H-pad.t-pad.b)*(1-(v-lo)/rng);
+  const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const bandP=path(ld.hi90)+' '+ld.lo90.slice().reverse().map((v,i)=>'L'+x(n-1-i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')+' Z';
+  let grid='';const step=niceStep(rng/4);for(let t=Math.ceil(lo/step)*step;t<=hi;t+=step){const yy=y(t).toFixed(1);
+    grid+=`<line x1="${pad.l}" y1="${yy}" x2="${W-pad.r}" y2="${yy}" stroke="#2b3a4d"/><text x="6" y="${(+yy+4)}" fill="#93a4b8" font-size="11" font-family="monospace">${fmtAxis(t)}</text>`;}
+  let xl='';[0,6,12,18,23].forEach(i=>{xl+=`<text x="${x(i).toFixed(1)}" y="${H-8}" fill="#93a4b8" font-size="11" text-anchor="middle">${String(i).padStart(2,'0')}h</text>`;});
+  $('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" preserveAspectRatio="xMidYMid meet">${grid}<path d="${bandP}" fill="#4d9fff" fill-opacity="0.18"/><path d="${path(ld.pred)}" fill="none" stroke="#36c1a6" stroke-width="2.4"/><path d="${path(ld.act)}" fill="none" stroke="#e8eef5" stroke-width="1.6" stroke-dasharray="4 3"/>${xl}</svg>`;}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x)));const f=x/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+function fmtAxis(t){const a=Math.abs(t);return a>=1000?(t/1000).toFixed(a>=1e4?0:1)+'k':(''+Math.round(t*100)/100);}
+</script>
+</body>
+</html>

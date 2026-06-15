@@ -1,0 +1,40 @@
+{
+  "datensatz": "SMARD Netzlast DE, stuendlich (echt)",
+  "zeitraum": "2024-01-01..2024-03-24",
+  "tage": 84,
+  "test_tage": 28,
+  "test_vorhersagen": 672,
+  "horizont": "Day-ahead 24h",
+  "mittlere_last_MW": 57424,
+  "metriken": {
+    "persist": {
+      "MAE_MW": 3816.2,
+      "RMSE_MW": 5986.2,
+      "MAPE_%": 6.93,
+      "MASE": 0.995,
+      "Skill_vs_Persistenz_%": 0.0,
+      "Skill_vs_SaisonalNaiv_%": -159.2
+    },
+    "snaive": {
+      "MAE_MW": 1472.4,
+      "RMSE_MW": 1848.8,
+      "MAPE_%": 2.71,
+      "MASE": 0.384,
+      "Skill_vs_Persistenz_%": 61.4,
+      "Skill_vs_SaisonalNaiv_%": 0.0
+    },
+    "ridge": {
+      "MAE_MW": 1411.4,
+      "RMSE_MW": 1795.8,
+      "MAPE_%": 2.56,
+      "MASE": 0.368,
+      "Skill_vs_Persistenz_%": 63.0,
+      "Skill_vs_SaisonalNaiv_%": 4.1
+    }
+  },
+  "probabilistisch": {
+    "Pinball_avg": 445.8,
+    "Coverage_P10_P90_%": 81.5,
+    "Soll_%": 80
+  }
+}

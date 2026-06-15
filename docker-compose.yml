@@ -1,0 +1,16 @@
+# NetzPilot-Dienst lokal/On-Premise starten:  docker compose up -d
+# UI: http://localhost:8000/   ·   Doku: http://localhost:8000/docs
+services:
+  netzpilot:
+    build: .
+    image: netzpilot:latest
+    ports:
+      - "8000:8000"
+    environment:
+      # API-Key setzen => X-API-Key Pflicht (außer /health, /, /docs). Leer lassen = lokal offen.
+      NETZPILOT_API_KEY: "${NETZPILOT_API_KEY:-}"
+      NETZPILOT_STORE: "/app/data_cache/service_store"
+    volumes:
+      # Prognose-Historie persistent auf dem Host halten (überlebt Container-Neustart).
+      - ./data_cache/service_store:/app/data_cache/service_store
+    restart: unless-stopped

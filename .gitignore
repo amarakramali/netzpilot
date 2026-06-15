@@ -1,0 +1,39 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Virtuelle Umgebungen ---
+.venv/
+venv/
+env/
+
+# --- Secrets / lokale Konfiguration ---
+.env
+*.key
+*.pem
+
+# --- Daten-Caches (NICHT versionieren) ---
+# Enthält echte DSO-Lastgänge, Demo-Store, Live-Track-Record/Ledger und SMARD-Live-Daten
+# (~1 GB, teils lizenz-/vertraulichkeitssensibel). Das v1-Beispiel-Sample bleibt bewusst
+# unter prognose_engine_v1/data/ getrackt, damit die Tests laufen.
+data_cache/
+*.parquet
+*.npz
+
+# --- Büro-/OS-Müll ---
+.~lock.*#
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.log
+
+# --- versehentliche Debug-Dumps (leer) ---
+/e.txt
+/err.txt
