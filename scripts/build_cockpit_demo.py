@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Build a rich operational cockpit JSON demo from real service outputs."""
 from __future__ import annotations
 

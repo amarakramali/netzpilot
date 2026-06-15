@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Small HTML report builder for cached NetzPilot backtest results."""
 from __future__ import annotations
 

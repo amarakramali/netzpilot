@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Statistischer Flexibilitäts-Zwilling — Was-wäre-wenn-Szenarien für den Netzausbau.
 
 Idee: ein voller Lastfluss-„digitaler Zwilling" ist für kleine

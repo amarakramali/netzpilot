@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Amar Akram
+
 /* NetzPilot — ENGINE-TREUER Forecast-Kern in JS (repliziert die Python-Engine 1:1).
  *
  * Quellen (exakt nachgebaut):

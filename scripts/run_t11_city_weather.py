@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Evaluate local Historical-Forecast weather features on synthetic city profiles.
 
 T11 validates the pipeline on modelled training-city profiles. These files are

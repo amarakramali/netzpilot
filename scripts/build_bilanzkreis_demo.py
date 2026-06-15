@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Build long-window realized Bilanzkreis settlement demo on public DSO rows."""
 from __future__ import annotations
 

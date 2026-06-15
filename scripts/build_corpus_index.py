@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Build the real public DSO corpus registry for T28.
 
 The registry is the machine-readable source of truth for:

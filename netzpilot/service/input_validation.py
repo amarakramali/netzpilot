@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Service-side input validation glue for measured load series.
 
 Keeps the verified validation math in netzpilot.data.validate untouched. This module only

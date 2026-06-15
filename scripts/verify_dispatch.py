@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify §14a-Quantil-Dispatch (control/dispatch.py) — reine stdlib, kein Internet.
 
 Prüft die Integration: §14a-Sicherheit (Grundlast+steuVE <= Schwelle überall), Newsvendor-Nominierung

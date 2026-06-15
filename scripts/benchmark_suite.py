@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """NetzPilot Benchmark-Suite — EIN Befehl, alle echten DSO-Datensaetze, mit Signifikanz.
 
 Warum das existiert (fuer einen technischen Gutachter):

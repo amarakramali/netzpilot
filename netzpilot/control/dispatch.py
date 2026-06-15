@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Mehrperiodiger §14a-bewusster Quantil-Dispatch — der Moat-Baustein.
 
 Vereint, was reine Prognose-Anbieter und reine Grid-IT je *für sich* nicht haben: aus der

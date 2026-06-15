@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 # ============================================================
 #  NetzPilot starten (macOS / Linux).
 #  Richtet beim ersten Mal alles ein (venv + Pakete), startet das

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Drift-Erkennung fuer Live-Prognosefehler vs. Referenz-Verteilung (Achse C.1).
 
 Operativer Zweck: NetzPilot prognostiziert taeglich. Ueber Zeit kann das Modell still degradieren

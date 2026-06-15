@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Physical renewable-generation proxies and leakage-safe bias correction."""
 from __future__ import annotations
 

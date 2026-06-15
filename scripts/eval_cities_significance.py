@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Resumable Per-Stadt-Signifikanz (paired Block-Bootstrap, Block = ganzer Tag).
 
 Fuer jede der 50 training_cities: rolling-origin Punktprognose (ShrunkCorrector),

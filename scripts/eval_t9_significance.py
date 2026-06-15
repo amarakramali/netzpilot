@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Bootstrap significance for T9 small-utility cached backtests.
 
 The script uses only cached rolling-origin arrays from T9. It does not retrain or

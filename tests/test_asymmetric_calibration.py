@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Tests fuer asymmetrische Coverage-Kalibrierung (T49).
 
 S1-S7 aus scripts/verify_asymmetric_calibration.py portiert (deterministisch).

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify fetch_smard-CLI OHNE Netz: fetch_series wird gemockt, geprüft wird die komplette
 CSV-/Provenance-/Generation-Logik (das, was zwischen SMARD-API und Engine liegt).
 

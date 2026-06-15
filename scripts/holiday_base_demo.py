@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T48-Demo: feiertagsbewusster Saisonal-Naiv-Anker auf echten DSO-Reihen.
 
 ISOLIERT den Anker-Effekt: das Feiertags-Flag (build_features) ist in BEIDEN Armen aktiv; verglichen wird

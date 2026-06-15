@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Frische ECHTE Netzlast online ziehen (SMARD/Bundesnetzagentur, CC BY 4.0, kein API-Key)
 und optional direkt durch die NetzPilot-Engine rechnen → Ergebnis-JSON im Service-Store.
 

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Service-Tests: Runner, Persistenz, FastAPI-API — auf echter Hilden-CSV.
 
 Überspringt sauber, wenn die echte Datei oder FastAPI/TestClient fehlen (CI-freundlich).

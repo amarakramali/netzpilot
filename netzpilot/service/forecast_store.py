@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Forecast-Verlauf-Store — beweisbar VORAB ausgegebene Prognosen + Live-Track-Record.
 
 Zweck (Ehrlichkeits-Infrastruktur): jede ausgegebene Day-ahead-Prognose wird ZUM AUSGABEZEITPUNKT in eine

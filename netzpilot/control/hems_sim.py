@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Simuliertes HEMS (Heimenergiemanagement).
 
 Pollt den aEMT fuer seine MaLo, holt die aktive §14a-Wirkleistungsgrenze und wendet sie auf

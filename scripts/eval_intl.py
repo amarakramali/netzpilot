@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Separate international benchmark for national aggregate TSO load (T30).
 
 This is intentionally separate from the DSO corpus:

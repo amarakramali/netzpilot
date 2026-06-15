@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 import pytest
 from netzpilot.control.schema import make_fahrplan, validate_fahrplan, active_limit_kw, MIN_GUARANTEED_KW
 from netzpilot.control.aemt_mock import AEMTMock

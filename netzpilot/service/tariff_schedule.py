@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Service glue for Paragraph-14a Module-3 grid-fee schedules.
 
 The verified optimizer lives in netzpilot.control.tariff. This module only

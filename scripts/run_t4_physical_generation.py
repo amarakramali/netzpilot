@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Run T4 physical PV/wind generation forecast plus residual-load comparison."""
 from __future__ import annotations
 

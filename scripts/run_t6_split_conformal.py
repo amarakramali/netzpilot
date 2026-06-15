@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Split-conformal calibration for already generated quantile arrays."""
 from __future__ import annotations
 

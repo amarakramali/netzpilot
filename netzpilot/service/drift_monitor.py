@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Service-side drift monitoring glue for forecast residuals.
 
 Keeps the verified drift math in netzpilot.eval.drift untouched. This module only

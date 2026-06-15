@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Feiertags-bewusster Saisonal-Naiv-Baseline (deterministische Baseline-Reparatur).
 
 Befund 2026-06-03 (gemessen): die Standard-Basis `load2d[d-7]` (Vorwoche, gleicher Wochentag) ist

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Konforme Vorhersageintervalle fuer den Day-ahead-Korrektor (reine numpy-Implementierung).
 
 Enthaelt:

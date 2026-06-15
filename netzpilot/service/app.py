@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """NetzPilot REST-Dienst (FastAPI). rev: +report/+history routes
 
 Macht aus der Batch-Engine einen betreibbaren Service:

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Beweis: Multi-Mandanten-Pooling hilft Haeusern mit WENIG Historie.
 
 Leave-one-utility-out auf den (modellierten) Stadt-Profilen:

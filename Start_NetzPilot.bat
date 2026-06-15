@@ -1,4 +1,7 @@
 @echo off
+REM SPDX-License-Identifier: AGPL-3.0-or-later
+REM Copyright (C) 2026 Amar Akram
+
 REM ============================================================
 REM  NetzPilot starten — ein Doppelklick.
 REM  Richtet beim ersten Mal automatisch alles ein (venv + Pakete),

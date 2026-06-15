@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T12: leakage-safe weather-lift checks on real weather-coupled load.
 
 Implemented dataset: HEAPO (Zenodo 15056919), restricted to >=2022-07-01 and

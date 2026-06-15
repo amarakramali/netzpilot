@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Run T10 improved small-utility validation with local weather and small-load features."""
 from __future__ import annotations
 

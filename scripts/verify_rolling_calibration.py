@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify ONLINE-rollende Coverage-Kalibrierung (eval/coverage_calibration.rolling_coverage_scale).
 
 Deterministisch, synthetisch, schnell. Kern: Kausalität/Leakage (s_i nutzt nie Tag i) + Adaption.

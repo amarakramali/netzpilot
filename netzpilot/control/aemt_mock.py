@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Mock-aEMT (stdlib http.server) — simuliert den BSI-zertifizierten White-Label-aEMT.
 
 Rolle: nimmt Fahrplaene von NetzPilot per REST/JSON entgegen, VALIDIERT sie (erzwingt die

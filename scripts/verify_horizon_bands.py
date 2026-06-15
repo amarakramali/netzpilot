@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify per-Horizont-Bänder (bands="per_horizon") — Kontrakt-, Paritäts- und Plausibilitätsbeweise.
 
 Beweise:

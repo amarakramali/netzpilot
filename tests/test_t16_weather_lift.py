@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Checks for T16 second real 2022+ weather-lift artifacts."""
 import json
 import math

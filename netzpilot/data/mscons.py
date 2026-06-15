@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """MSCONS-Lese-Adapter (read-only) — EDIFACT-Lastgang → interne Stundenserie.
 
 Stadtwerke bekommen ihre Lastgänge in der Marktkommunikation als EDIFACT-MSCONS-Nachricht

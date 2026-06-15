@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 from netzpilot.data.smard import load_local_json
 from netzpilot.features.build import to_daily, get_holidays
 from netzpilot.eval.conformal import rolling_origin_conformal, rolling_origin_cqr

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify Coverage-Kalibrierung (eval/coverage_calibration.py).
 
 Synthetische Kontrollfälle (deterministisch) + echter leakage-sicherer Transfer-Beweis auf DSO-Reihen.

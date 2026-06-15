@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Einstiegspunkt: leakage-sicheres Rolling-Origin-Backtest auf SMARD-Last.
 Beispiel (v1 reproduzieren, nur numpy/pandas):
   python scripts/run_backtest.py --data "prognose_engine_v1/data/wk*.json"

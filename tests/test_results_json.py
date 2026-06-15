@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Guard cached result artifacts against truncated or invalid JSON."""
 from pathlib import Path
 import json

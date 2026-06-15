@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Leakage-sicheres Rolling-Origin-Backtest (expanding window).
 
 Vergleicht: Persistenz, Saisonal-Naiv und ein Korrekturmodell (Ridge v1 oder LGBM, T3).

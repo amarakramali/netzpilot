@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T49-Demo: asymmetrische (lo/hi getrennt) vs. symmetrische Coverage-Kalibrierung.
 
 Schreibt data_cache/benchmark/asymmetric_calibration_demo.md mit Vergleich

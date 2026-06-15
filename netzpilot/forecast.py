@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Operative Day-ahead-Prognose: erzeugt fuer den NAECHSTEN Tag P10/P50/P90 (kalibriert via CQR).
 
 Macht aus der Backtest-Engine ein Werkzeug: gegeben die Lasthistorie -> Fahrplan fuer morgen.

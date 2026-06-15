@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 import numpy as np
 from netzpilot.models.robust_corrector import ShrunkCorrector
 def _X(n, feat): return np.column_stack([np.ones(n), feat, np.zeros(n)])

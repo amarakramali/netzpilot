@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Mehr-/Mindermengen-Report (EDM-Reconciliation).
 
 Mehr-/Mindermengen (MMM) sind die Differenz zwischen der einem Lieferanten/Bilanzkreis ZUGEORDNETEN

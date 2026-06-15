@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Hole Day-Ahead-Spotpreise DE-LU 2024 (offizielle SMARD/EPEX-Daten via Energy-Charts API).
 
 Schreibt:

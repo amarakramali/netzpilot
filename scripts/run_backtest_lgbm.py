@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T3 (HOST-LAUF, nicht in der Build-Sandbox ausfuehrbar: braucht lightgbm + pyarrow).
 
 LightGBM-Quantil-Korrektur mit Wetter-Features auf dem 2-Jahres-Cache (T2).

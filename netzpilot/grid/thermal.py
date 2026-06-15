@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Transformer thermal risk model for a single asset.
 
 IEC 60076-7 / IEEE C57.91 style transformer checks are about hot-spot temperature

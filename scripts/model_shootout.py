@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Modell-Shootout: Champion vs. Varianten auf echten Daten — ehrlich auf Signifikanz der DIFFERENZ.
 
 Frage: Ist eine Modellvariante WIRKLICH besser als der aktuelle Champion (ShrunkCorrector +

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Tests fuer Online-Residuen-Feedback (T50).
 
 S1-S6 aus scripts/verify_residual_feedback.py portiert (AR(1)-Gewinn, ρ~φ, Kausalitaet,

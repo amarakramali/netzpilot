@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T9 aggregation-level sensitivity: forecast skill vs. idiosyncratic load volatility.
 
 Self-contained, dependency-light (numpy/pandas/stdlib only — runs in the sandbox).

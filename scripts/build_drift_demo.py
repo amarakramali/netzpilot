@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Build drift-monitoring demo on a real DSO row plus labeled synthetic drift."""
 from __future__ import annotations
 

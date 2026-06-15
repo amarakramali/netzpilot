@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Tests fuer feiertagsbewusste Baseline (T48).
 
 Synthetische S1-S7 aus scripts/verify_holiday_base.py portiert (deterministisch).

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Amar Akram
+
 /* _cockpit_script_check.js — rev5 (2026-06-04): liest den <script>-Body LIVE aus cockpit.html
    und eval't ihn gegen den DOM-Stub. Damit kann der Harness NIE mehr von der UI divergieren
    (rev2–rev4 trugen eine eingebettete Kopie, die bei jeder UI-Aenderung nachgezogen werden musste).

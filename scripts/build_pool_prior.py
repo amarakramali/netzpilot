@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Pool-Prior aus mehreren Lastgang-Reihen bauen und speichern (produktiver Multi-Mandanten-Effekt).
 
 Speist den persistierten Pool-Prior (data_cache/pool/pool_prior.json), den der Dienst nutzt, wenn ein

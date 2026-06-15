@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """NetzPilot Smoke-Test — EIN Befehl, der vor jedem Termin den ganzen Stack grün/rot prüft.
 
 Zweck (zwei Fliegen, eine Klappe):

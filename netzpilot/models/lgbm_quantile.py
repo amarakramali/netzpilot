@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T3: LightGBM-Quantilregression auf der Wochenabweichung (P10/P50/P90).
 Lazy import von lightgbm, damit der Baseline-/Ridge-Pfad ohne lightgbm laeuft.
 """

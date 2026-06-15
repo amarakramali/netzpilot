@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Intraday-Hebel MESSEN, bevor irgendetwas verdrahtet wird (Juni-Disziplin: Mess-Schleife).
 
 Frage: Um Stunde h des Prognosetags sind die Stunden 0..h-1 bereits Ist — wie viel besser wird der

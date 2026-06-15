@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Open-Meteo connector.
 
 Use Historical Forecast for training/backtests. Do not use reanalysis/historical actual weather

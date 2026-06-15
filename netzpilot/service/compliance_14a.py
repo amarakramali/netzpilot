@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """§14a-Compliance-Auswertungen aus dem Audit-Ledger (W12 + W13).
 
 Zwei Berichte, beide ausschließlich aus dem hash-verketteten Eingriffs-Ledger

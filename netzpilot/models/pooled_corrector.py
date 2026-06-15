@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Multi-Mandanten-Pooling: ein neues Stadtwerk profitiert vom Wissen ALLER anderen.
 
 Das Problem: Ein kleines Stadtwerk mit nur wenigen Wochen Historie kann sein Korrekturmodell nicht

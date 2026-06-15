@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """§14a-Fahrplan-OPTIMIERUNG: minimale, faire Abregelung statt pauschalem Dimmen.
 
 Bisher (schema.make_fahrplan): bei Engpass werden ALLE steuerbaren Verbrauchseinrichtungen pauschal

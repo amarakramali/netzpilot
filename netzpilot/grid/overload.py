@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Probabilistische Asset-Überlast-Prognose & Hosting-Capacity.
 
 Sagt, WANN ein Netzasset überlastet wird und WIE VIEL zusätzliche Last/Erzeugung es verträgt — aus der

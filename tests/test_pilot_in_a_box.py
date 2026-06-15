@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Checks for real DSO CSV ingestion used by Pilot-in-a-Box."""
 from pathlib import Path
 from tempfile import TemporaryDirectory

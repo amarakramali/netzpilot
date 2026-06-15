@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """MSCONS-Lese-Adapter (W19): EDIFACT-Lastgang → interne Stundenserie. Fixture-frei (run_all_checks-Shim).
 
 Verifiziert an synthetischen, struktur-konformen MSCONS-Nachrichten (edi@energy-Segmentstruktur).

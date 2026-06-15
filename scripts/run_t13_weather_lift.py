@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T13: leakage-safe HEAPO weather lift with station-local forecast weather.
 
 HEAPO anonymizes weather station IDs. Five of the eight IDs can be mapped

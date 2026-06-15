@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Normalize ENTSO-E Power Statistics national hourly load values for T30.
 
 This uses the official public ENTSO-E Power Statistics CSV, not the tokened REST API.

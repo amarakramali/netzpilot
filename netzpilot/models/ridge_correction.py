@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """v1-Modell: Ridge-Regression auf der Wochenabweichung (reines numpy)."""
 import numpy as np
 class RidgeCorrector:

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Signifikanz/Unsicherheit der v1-Punktprognose auf dem 12-Wochen-Fenster.
 
 Kontext (07:30-Lauf, Fallback): Die geplante T4-Residuallast-Mini-Demo war in der

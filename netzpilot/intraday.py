@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Intraday-Update: Resttag-Prognose aus den heute bereits beobachteten Stunden nachschärfen.
 
 Gemessen (scripts/measure_intraday.py, 84 Testtage, 3 echte Reihen, 2026-06-05): ein Level-Shift

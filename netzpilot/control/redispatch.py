@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Rolling Paragraph-14a redispatch.
 
 The module uses existing control optimization only. It can run the old homogeneous

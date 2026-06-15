@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Realized Bilanzkreis settlement on rolling-origin backtest rows."""
 from __future__ import annotations
 

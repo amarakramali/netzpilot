@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Service glue for Paragraph-14a quantile dispatch plans."""
 from __future__ import annotations
 

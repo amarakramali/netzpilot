@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Resumable 50-Staedte CQR-Kalibrierung: Coverage bei nominal 80% und 90% je Stadt.
 
 Schreibt inkrementell nach data_cache/cities_all_cqr.jsonl (eine Zeile je Stadt),

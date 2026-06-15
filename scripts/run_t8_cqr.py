@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Run T8 rolling CQR calibration for load and residual-load targets."""
 from __future__ import annotations
 

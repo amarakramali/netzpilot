@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T16: second 2022+ leakage-safe weather-lift dataset.
 
 Primary attempt: Offenbach Smart-Building via Dryad API. If the file download is

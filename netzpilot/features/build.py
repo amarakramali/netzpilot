@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Leakage-sichere Feature-Erzeugung fuer Day-ahead (Stichtag 00:00 lokal).
 
 Modelliert die Wochenabweichung r(d,h) = load(d,h) - load(d-7,h) ("Saisonal-Naiv + Korrektur").

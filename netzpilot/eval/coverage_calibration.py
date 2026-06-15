@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Coverage-Kalibrierung der Prognosebänder durch geschrumpfte Band-Skalierung (leakage-sicher).
 
 Befund 2026-06-03 (gemessen, nicht behauptet): die produktiven P10/P90-Bänder (rohe Trainings-

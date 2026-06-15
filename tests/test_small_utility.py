@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 import pandas as pd
 
 from netzpilot.data.small_utility import aggregate_opsd_grid_import

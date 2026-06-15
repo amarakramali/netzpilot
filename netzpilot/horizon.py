@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Mehrtages-Horizont: D+1 … D+H aus EINEM leakage-sicheren Fit (operative Betriebslücke).
 
 Warum: Ein Stadtwerk nominiert freitags für Sa+So+Mo — Day-ahead allein reicht im Betrieb nicht.

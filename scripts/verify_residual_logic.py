@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify the RESIDUAL-LOAD core logic independently (pure stdlib).
 
 The runner builds Residuallast = Last - Erzeugung on the common hourly axis and then

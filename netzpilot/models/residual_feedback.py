@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Online-Residuen-Feedback — korrigiert die Punktprognose (P50) um persistente Modellfehler.
 
 Befund 2026-06-03 (gemessen): die Modell-Residuen (actual − forecast) sind SIGNIFIKANT positiv

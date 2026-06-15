@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Staged production-ish aEMT API (FastAPI) — NICHT in der Sandbox ausgefuehrt (kein FastAPI).
 Identische Logik wie aemt_mock.py; fuer den Host-Lauf / echten White-Label-Partner-Anschluss.
 Run (Host):  uvicorn netzpilot.control.aemt_api:app --port 8077

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify Mehrtages-Horizont (netzpilot/horizon.py) — Leakage-Beweise + Korrektheit. Exit!=0 bei Fehler.
 
 Zentrale Beweise:

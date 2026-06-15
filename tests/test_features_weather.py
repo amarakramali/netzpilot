@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 import numpy as np, pandas as pd
 from netzpilot.features.build import build_small_load_features, to_daily_local, frame_to_daily_local
 

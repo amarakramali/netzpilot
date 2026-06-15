@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Tests fuer Coverage-Kalibrierung (T45).
 
 Synthetische S1-S6 aus scripts/verify_coverage_calibration.py portiert (deterministisch).

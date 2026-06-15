@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify Drift-Erkennung (eval/drift.py) — reine stdlib, kein Internet.
 
 Harte Anker: PSI gegen einen HANDGERECHNETEN Wert (0,054931) und KS gegen den exakten

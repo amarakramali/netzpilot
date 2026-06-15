@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Kostenoptimaler Lastfahrplan gegen ein zeitvariables Netzentgelt (§14a EnWG Modul 3) — Achse A.3.
 
 Hintergrund: §14a EnWG erlaubt seit 2025 als **Modul 3** ein ZEITVARIABLES Netzentgelt — der

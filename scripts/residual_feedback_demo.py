@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T50-Demo: Online-Residuen-Feedback auf echten DSO-Reihen (Punktprognose-Korrektur).
 
 Schreibt data_cache/benchmark/residual_feedback_demo.md mit:

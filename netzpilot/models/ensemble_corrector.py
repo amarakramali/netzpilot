@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Ensemble-Korrektor: mittelt mehrere Ridge-Staerken, jede mit Shrinkage-Sicherheitsnetz.
 
 Motivation: Eine einzelne Ridge-Staerke (lam) ist ein Punkt-Bet auf die richtige Regularisierung.

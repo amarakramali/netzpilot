@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Schlanke Datei-Persistenz für Prognoseläufe — kein DB-Server nötig.
 
 Jeder Lauf je Mandant (utility) wird als JSON unter store_dir/<utility>/<date>.json abgelegt;

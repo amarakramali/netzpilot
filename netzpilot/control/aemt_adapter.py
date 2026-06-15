@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """aEMT-Adapter: Übergabe eines §14a-Fahrplans an einen (zertifizierten) aktiven EMT.
 
 Rollentrennung (wichtig für die regulatorische Glaubwürdigkeit):

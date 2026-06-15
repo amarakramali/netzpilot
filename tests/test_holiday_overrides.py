@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Feiertags-Overrides: Nutzer markiert Tage explizit als (Nicht-)Feiertag — statt dass die
 Software rät. Fixture-frei (läuft im run_all_checks-Shim)."""
 import os

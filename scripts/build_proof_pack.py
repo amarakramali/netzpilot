@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Proof-Pack-Generator — EIN sauberes Beweis-Dokument für Stadtwerke.
 
 Gießt zusammen, was sonst über mehrere Dateien verstreut ist:

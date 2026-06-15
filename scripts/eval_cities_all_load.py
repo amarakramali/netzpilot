@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Resumable 50-Staedte Last-Auswertung (Skill/MAPE vs. Baselines).
 
 Schreibt inkrementell nach data_cache/cities_all_load.jsonl (eine Zeile je Stadt),

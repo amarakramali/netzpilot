@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Checks for T12 leakage-safe weather-lift artifacts."""
 import json
 import math

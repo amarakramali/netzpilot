@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T45-Demo: Coverage-Kalibrierung leakage-sicher auf echten DSO-Reihen.
 
 Schreibt data_cache/benchmark/coverage_calibration_demo.md mit Tabelle

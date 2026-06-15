@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Fehler- und Skill-Metriken. Alle erwarten 1D-numpy-Arrays gleicher Laenge."""
 import numpy as np
 def mae(pred, actual):  return float(np.mean(np.abs(pred - actual)))

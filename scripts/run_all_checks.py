@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Konsolidierter Check-Lauf (dep-freier Pfad): alle Tests + Integrations-Checks. Exit!=0 bei Fehler."""
 import sys, os, types, importlib
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

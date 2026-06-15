@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """T9 (Proxy): Forecaster + CQR auf repraesentativer KLEIN-Stadtwerk-Last vs. nationaler Last.
 Echte OPSD/BDEW-Validierung = Codex/Host (T9). Hier: verifizierbarer numpy-Test des Verhaltens bei kleiner Last."""
 import sys, os, json

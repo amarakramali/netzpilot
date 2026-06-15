@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """A/B-Test zusaetzlicher Features (selbst-enthalten; aendert NICHT die geteilte build.py).
 Ergebnis ist ein Vorschlag fuer Codex, falls v2 hilft. Modell: ShrunkCorrector, Backtest 28 Tage."""
 import sys, os

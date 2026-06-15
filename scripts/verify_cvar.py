@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify CVaR risk-averse Nominierung (control/risk.py) — reine stdlib, kein Internet.
 
 Kern: β=0 == Newsvendor-Erwartungswert (τ-Quantil); β>0 senkt CVaR (Tail) zu Lasten höheren

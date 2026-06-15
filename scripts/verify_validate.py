@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify Messdaten-Validierung (data/validate.py) — reine stdlib, kein Internet.
 
 Jeder Defekttyp einzeln: Lücke, Ausreißer (MAD), negativ, eingefroren (nur Meldung); plus

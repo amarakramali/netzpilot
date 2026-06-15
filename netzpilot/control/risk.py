@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Risk-averse Bilanzkreis-Nominierung über CVaR (Querschnitt-Recherche-Fund).
 
 Unsere Newsvendor-Nominierung (control/dispatch.cost_optimal_nomination) minimiert den ERWARTUNGSWERT

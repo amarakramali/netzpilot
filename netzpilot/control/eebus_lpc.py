@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """EEBUS-LPC-Mapping für den §14a-Fahrplan.
 
 EEBUS ist das von BNetzA/BSI für §14a vorgesehene Protokoll. Der einschlägige Use-Case ist

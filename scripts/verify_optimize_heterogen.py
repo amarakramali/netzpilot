@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify optimize_setpoints_heterogen (control/optimize.py) — reine stdlib, kein Internet.
 
 Prueft die Eigenschaften, die fuer eine HETEROGENE steuVE-Flotte (WP/Wallbox/Speicher) gelten muessen:

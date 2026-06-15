@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Pilot-in-a-Box — echte Stadtwerk-CSV rein, ehrlicher Nachweis raus.
 
 Wirf den Lastgang eines Stadtwerks (CSV, beliebige Auflösung) hinein und erhalte:

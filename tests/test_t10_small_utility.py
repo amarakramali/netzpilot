@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Golden checks for the improved T10 small-utility run."""
 import json
 from pathlib import Path

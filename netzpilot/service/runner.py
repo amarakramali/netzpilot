@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Runner: orchestriert die ECHTE netzpilot-Engine zu einem Service-Aufruf.
 
 Lastgang (CSV-Pfad oder load2d) -> leakage-sichere Day-ahead-Prognose (forecast_next_day,

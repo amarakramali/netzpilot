@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Amar Akram
+
 /* NetzPilot — Browser-Forecast-Kern (reines JS, kein Backend).
  *
  * Bildet die Methode der Python-Engine treu, aber vereinfacht ab:

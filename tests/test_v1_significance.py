@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Regression-/Konsistenztest fuer die v1-Signifikanzanalyse.
 
 Sichert das Codex-Ergebnis `data_cache/v1_significance/results.json` ab:

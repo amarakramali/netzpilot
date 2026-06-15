@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Build a service-level EEBUS-LPC mapping demo on a real public DSO row."""
 from __future__ import annotations
 

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Manifest der echten DSO-Datensaetze mit EXPLIZIT gepinnten Spalten/Ebenen.
 
 T28 promotes ``data_cache/real/corpus_index.json`` to the machine-readable source of truth.

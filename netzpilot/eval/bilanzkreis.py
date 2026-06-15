@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Bilanzkreis-Ausgleichsenergie-Simulator — realistische Viertelstunden-Abrechnung (Achse B.1).
 
 Ersetzt die LINEARE Naeherung (economics.expected_saving_eur: dMAE * Stunden * Mittel-Spread) durch

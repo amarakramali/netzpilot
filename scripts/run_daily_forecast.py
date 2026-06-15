@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Täglicher Day-ahead-Lauf (Scheduler-Einstieg) — ein Mandant oder mehrere via Config.
 
 Beispiel (cron/Task Scheduler, z.B. 06:00):

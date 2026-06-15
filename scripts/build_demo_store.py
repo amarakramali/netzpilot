@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Befüllt den Service-Store mit Ergebnis-JSONs für ALLE kuratierten echten Korpus-Reihen.
 
 Zweck: Das Cockpit braucht Ergebnis-JSONs (Upload / „Latest laden"). Bisher existierten nur

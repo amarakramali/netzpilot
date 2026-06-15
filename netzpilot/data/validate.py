@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Messdaten-Plausibilisierung & Ersatzwertbildung für Lastgänge.
 
 Prüft eingehende Messreihen auf Plausibilität (Lücken, Ausreißer, eingefrorene Zähler,

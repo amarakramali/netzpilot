@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Tests fuer Forecast-Verlauf-Store (T51).
 
 S1-S6 aus scripts/verify_forecast_store.py portiert (exakte Auswertung, pending,

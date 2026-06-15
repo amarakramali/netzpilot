@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Persistierter Pool-Prior für den produktiven Multi-Mandanten-Effekt.
 
 Der Pool-Prior ist der über viele Stadtwerke gemittelte Korrektur-Koeffizientenvektor — gelernt im

@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify MinT-Reconciliation (models/reconcile.py) — numpy, kein Internet.
 
 Aufruf: python scripts/verify_reconcile.py

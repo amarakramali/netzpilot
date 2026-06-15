@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Build the T43 temporal reconciliation demo on Hilden Netzumsatz 2025."""
 from __future__ import annotations
 

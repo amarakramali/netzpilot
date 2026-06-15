@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Verify Bilanzkreis-Settlement (eval/bilanzkreis.py) — reine stdlib, kein Internet.
 
 Kernaussage des Moduls: die echte Viertelstunden-Abrechnung faengt die Korrelation zwischen

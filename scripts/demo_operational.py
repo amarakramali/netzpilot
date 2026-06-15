@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Operative Ende-zu-Ende-Schleife (numpy + stdlib, lauffaehig):
 Prognose (morgen, P90) -> Engpass-Erkennung an der Trafo-Grenze -> §14a-Fahrplan ->
 Mock-aEMT -> HEMS drosselt Wallbox. Verbindet Prognose-Engine und §14a-Steuerkreis zum Produkt.

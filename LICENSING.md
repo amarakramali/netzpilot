@@ -18,7 +18,7 @@ Kurz gefasst: Du darfst den Code **einsehen, nutzen, ändern und weitergeben**. 
 
 Wer NetzPilot **ohne** die Offenlegungs-Pflichten der AGPL nutzen möchte — z. B. in einem geschlossenen/proprietären Produkt oder als nicht quelloffener SaaS-Dienst — kann eine **kommerzielle Lizenz** erwerben. Da sämtliche Rechte am Code beim Rechteinhaber liegen, ist eine separate, abweichende Lizenzierung möglich.
 
-📧 **Anfragen** für kommerzielle Lizenzen, Piloten oder Kooperationen richte bitte an den Rechteinhaber **Amar Akram** (Kontakt siehe GitHub-Profil bzw. auf Anfrage).
+📧 **Anfragen** für kommerzielle Lizenzen, Piloten oder Kooperationen bitte über das GitHub-Profil des Rechteinhabers: **[@amarakramali](https://github.com/amarakramali)**.
 
 ---
 
@@ -29,4 +29,4 @@ Wer NetzPilot **ohne** die Offenlegungs-Pflichten der AGPL nutzen möchte — z.
 - **Open source — GNU AGPL-3.0** (see [LICENSE](LICENSE)): you may use, study, modify and share it, but you must release derivative works under the AGPL-3.0 and disclose source — **including** when you run a modified version only as a network/SaaS service (AGPL § 13).
 - **Commercial license** (no copyleft obligations): available from the copyright holder for use in closed/proprietary products or non-open SaaS. Because the copyright is held entirely by the author, separate licensing is possible.
 
-Contact **Amar Akram** for commercial, pilot, or partnership inquiries.
+Contact the copyright holder via GitHub — **[@amarakramali](https://github.com/amarakramali)** — for commercial, pilot, or partnership inquiries.

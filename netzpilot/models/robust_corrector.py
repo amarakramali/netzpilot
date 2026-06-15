@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Robuster Korrektor: Shrinkage der Korrektur Richtung Baseline (Saisonal-Naiv).
 
 Motivation (T9-Befund): bei volatiler Klein-Last schlaegt eine ungedaempfte Ridge-Korrektur die

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Repraesentativer KLEIN-Stadtwerk-Lastgang (Proxy bis echte Pilot-/OPSD-Daten vorliegen).
 
 Zweck: den Forecaster dort testen, wo das Produkt wirklich laufen muss — auf kleiner, weniger

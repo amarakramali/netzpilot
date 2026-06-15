@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 from netzpilot.data.smard import load_local_json
 from netzpilot.data.synthetic_smallutility import make_small_utility_load
 def test_proxy_shape_and_positive():

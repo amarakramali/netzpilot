@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Loader fuer Day-Ahead-Spotpreise (DE-LU), QH-aligned an die reBAP-Achse.
 
 Spot-CSV-Format (von scripts/fetch_spot_da_2024.py): ``Zeit;spot_DA_EUR_MWh`` mit

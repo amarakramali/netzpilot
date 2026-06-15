@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """
 NetzPilot - Dispatch experiment, sensitivity study: what actually drives the saving?
 

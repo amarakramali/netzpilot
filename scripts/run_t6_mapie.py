@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Run T6 MAPIE EnbPI interval comparison on the T2 cache."""
 from __future__ import annotations
 

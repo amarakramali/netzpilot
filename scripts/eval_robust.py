@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Vergleicht Ridge vs. ShrunkCorrector auf National- und Klein-Proxy-Last (Skill vs. saisonal-naiv)."""
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

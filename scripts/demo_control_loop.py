@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """End-to-End-Demo des §14a-Steuerkreises (stdlib, lauffaehig):
 NetzPilot (Prognose) -> Fahrplan -> Mock-aEMT (zertifizierter Gatekeeper) -> HEMS -> Wallbox.
 Zeigt: netzdienliche Drosselung auf die §14a-Mindestleistung, und dass der aEMT illegale

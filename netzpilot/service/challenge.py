@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 Amar Akram
+
 """Blind-Challenge: leakage-sicherer Sofort-Beweis auf FREMDEN Daten.
 
 Der Termin-Moment: jemand bringt seinen eigenen Lastgang mit, und NetzPilot rechnet vor seinen
