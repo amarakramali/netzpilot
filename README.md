@@ -2,7 +2,7 @@
 
 **Leakage-sichere Last-, Erzeugungs- und Residuallastprognose für kleine deutsche Stadtwerke — mit §14a-EnWG-Steuerung, Bilanzkreis-Ökonomie und operativem Cockpit.**
 
-> ⚠️ **Privates, proprietäres Projekt.** Siehe [LICENSE](LICENSE) — alle Rechte vorbehalten, keine Nutzung ohne ausdrückliche Genehmigung.
+> ⚠️ **Proprietäres Projekt — alle Rechte vorbehalten.** Siehe [LICENSE](LICENSE): öffentlich einsehbar (source-available), aber keine Nutzung ohne ausdrückliche Genehmigung.
 
 ---
 
@@ -77,4 +77,4 @@ prognose_engine_v1/   eingefrorenes v1-Beispiel (mit Beispieldaten für die Test
 
 ## Lizenz
 
-Proprietär — alle Rechte vorbehalten, siehe [LICENSE](LICENSE). Das Klonen oder Einsehen dieses privaten Repositorys begründet keinerlei Nutzungs- oder Verwertungsrechte. Für Lizenz-, Pilot- oder Kooperationsanfragen den Rechteinhaber kontaktieren.
+Proprietär — alle Rechte vorbehalten, siehe [LICENSE](LICENSE). Das Repository ist öffentlich einsehbar (source-available); das Klonen oder Einsehen begründet jedoch keinerlei Nutzungs- oder Verwertungsrechte. Für Lizenz-, Pilot- oder Kooperationsanfragen den Rechteinhaber kontaktieren.

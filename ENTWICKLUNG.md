@@ -5,7 +5,7 @@ Leakage-sichere Last-, Erzeugungs- und Residuallastprognose fuer kleine deutsche
 > Dies ist die ausfuehrliche Entwicklungs-Dokumentation (Aufgaben T2–T44, alle Messwerte,
 > Artefakt-Pfade). Fuer den kompakten Ueberblick siehe **[README.md](README.md)**.
 
-> **Privates, proprietäres Projekt.** Siehe [LICENSE](LICENSE) — alle Rechte vorbehalten,
+> **Proprietäres Projekt — alle Rechte vorbehalten.** Siehe [LICENSE](LICENSE),
 > keine Nutzung ohne ausdrückliche Genehmigung.
 
 ## Aktueller Funktionsstand (Juni 2026)
