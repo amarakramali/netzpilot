@@ -1,4 +1,4 @@
-# Mitwirken / Contributing
+# Mitwirken/Contributing
 
 Danke für dein Interesse an NetzPilot!
 
