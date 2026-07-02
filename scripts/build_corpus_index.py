@@ -42,7 +42,7 @@ def _p(name: str) -> str:
 def _entry(key, name, csv, col, unit, operator, series, year, source_url, legal_basis,
            ts=None, level=None, signed=False, kind="load", official_page=None,
            source_archive=None, include_in_benchmark=True, include_in_pool=None,
-           country="DE", network_kind="dso_real"):
+           country="DE", network_kind="dso_real", source_set="core"):
     pool_default = bool(
         (not signed)
         and network_kind == "dso_real"
@@ -66,6 +66,7 @@ def _entry(key, name, csv, col, unit, operator, series, year, source_url, legal_
         "source_archive": source_archive,
         "country": country,
         "network_kind": network_kind,
+        "source_set": source_set,
         "signed": bool(signed),
         "kind": kind,
         "include_in_benchmark": bool(include_in_benchmark),
@@ -269,6 +270,199 @@ CORPUS_SPECS += [
            kind="regional_load", official_page=ECO2MIX_PAGE, include_in_pool=False,
            country="FR", network_kind="tso_regional"),
 ]
+
+
+# Public-source audit, July 2026 -------------------------------------------------
+#
+# These rows extend the original proof corpus without silently treating generation,
+# losses or published forecast sums as consumer load.  Only measured load/JHL/Bezug
+# rows participate in the load benchmark; all other rows remain validated and fully
+# traceable in corpus_index.json for the residual-load and settlement workstreams.
+from scripts.fetch_dso_corpus import extended_specs
+
+_EXTENDED_DOWNLOADS = {spec.key: spec for spec in extended_specs()}
+
+
+def _extended_entry(download_key, name, series, *, col="Wert", level=None, kind=None,
+                    signed=False, include_in_benchmark=None, include_in_pool=None):
+    spec = _EXTENDED_DOWNLOADS[download_key]
+    row_kind = kind or spec.kind
+    if include_in_benchmark is None:
+        include_in_benchmark = row_kind in {"load", "jhl", "bezug"}
+    return _entry(
+        download_key,
+        name,
+        spec.target.replace("\\", "/"),
+        col,
+        "kW",
+        spec.operator,
+        series,
+        spec.year,
+        spec.url,
+        "Official EnWG/StromNZV publication; see source page",
+        level=level,
+        signed=signed,
+        kind=row_kind,
+        official_page=spec.source_page,
+        source_archive=(spec.archive_target or "").replace("\\", "/") or None,
+        include_in_benchmark=include_in_benchmark,
+        include_in_pool=include_in_pool,
+        source_set="extended_2026_audit",
+    )
+
+
+# Hilden: voltage-level demand plus the feed-in/loss rows needed for residual load.
+for level, label in (("ms", "MS"), ("msns", "MS/NS"), ("ns", "NS")):
+    CORPUS_SPECS.append(_extended_entry(
+        f"hilden_jhl_{level}_2025", f"Stadtwerke Hilden - Lastverlauf {label} 2025",
+        f"Lastverlauf {label}", col="Reihe1", level=label, kind="jhl"))
+    CORPUS_SPECS.append(_extended_entry(
+        f"hilden_einspeisung_{level}_2025", f"Stadtwerke Hilden - Einspeisung {label} 2025",
+        f"Dezentrale Einspeisung {label}", col="Reihe1", level=label, kind="generation"))
+CORPUS_SPECS.append(_extended_entry(
+    "hilden_verlustenergie_2025", "Stadtwerke Hilden - Verlustenergie 2025",
+    "Verlustenergie", col="Reihe1", kind="loss"))
+
+# EVDB 2025: current publication year.  Loads are benchmarked; operational companion
+# series are registered for residual-load, loss and settlement analyses only.
+for level in ("ms", "msns", "ns"):
+    label = level.upper().replace("MSNS", "MS/NS")
+    CORPUS_SPECS.append(_extended_entry(
+        f"evdb_jhl_{level}_2025", f"EVDB - Lastverlauf {label} 2025",
+        f"Lastverlauf {label}", level=label, kind="jhl"))
+    CORPUS_SPECS.append(_extended_entry(
+        f"evdb_bezug_{level}_2025", f"EVDB - Bezug {label} 2025",
+        f"Bezug vorgelagerte Ebene {label}", level=label, kind="bezug"))
+    CORPUS_SPECS.append(_extended_entry(
+        f"evdb_verlust_{level}_2025", f"EVDB - Verlustlast {label} 2025",
+        f"Netzverlust {label}", level=label, kind="loss"))
+    for direction, title in (("ein", "Einspeisung"), ("rs", "Rueckspeisung")):
+        CORPUS_SPECS.append(_extended_entry(
+            f"evdb_{direction}_{level}_2025", f"EVDB - {title} {label} 2025",
+            f"{title} {label}", level=label, kind="generation"))
+for key, title, kind, signed in (
+    ("evdb_dba_2025", "Differenzbilanzierung", "differenzbilanz", True),
+    ("evdb_slp_ns_2025", "SLP-Summenlast NS", "profile_sum", False),
+    ("evdb_netzverluste_summe_2025", "Summenlast Netzverluste", "loss", False),
+    ("evdb_fahrplan_2025", "Fahrplanprognose", "forecast_sum", False),
+    ("evdb_rlk_2025", "Restlastkurve", "residual", True),
+):
+    CORPUS_SPECS.append(_extended_entry(
+        key, f"EVDB - {title} 2025", title, kind=kind, signed=signed))
+
+# Neuruppin: extend the existing 2022 JHL rows backwards to a three-year history.
+for year in (2020, 2021):
+    for col, level in (("Wert.11", "MS"), ("Wert.12", "MS/NS"), ("Wert.13", "NS")):
+        CORPUS_SPECS.append(_extended_entry(
+            f"neuruppin_lgl_{year}",
+            f"Stadtwerke Neuruppin - Lastverlauf {level} {year}",
+            f"Lastverlauf Jahreshoechstlast {level}", col=col, level=level, kind="jhl"))
+        # Multiple pinned series share one physical source file; keys must stay unique.
+        CORPUS_SPECS[-1]["key"] = f"neuruppin_{level.lower().replace('/', '')}_{year}"
+
+# Bitterfeld-Wolfen: withdrawal is load; the remaining rows enrich residual-load input.
+for level in ("ms", "msns", "ns"):
+    label = level.upper().replace("MSNS", "MS/NS")
+    CORPUS_SPECS.append(_extended_entry(
+        f"bitterfeld_entnahme_{level}_2024", f"NG Bitterfeld-Wolfen - Entnahme {label} 2024",
+        f"Hoechstentnahmelast {label}", level=label, kind="load"))
+for key, title, kind, level in (
+    ("bitterfeld_einspeisung_ms_2024", "Einspeisung MS", "generation", "MS"),
+    ("bitterfeld_einspeisung_ns_2024", "Einspeisung NS", "generation", "NS"),
+    ("bitterfeld_rueckspeisung_ms_2024", "Rueckspeisung MS", "generation", "MS"),
+    ("bitterfeld_rueckspeisung_msns_2024", "Rueckspeisung MS/NS", "generation", "MS/NS"),
+    ("bitterfeld_rueckspeisung_ns_2024", "Rueckspeisung NS", "generation", "NS"),
+    ("bitterfeld_netzverluste_2024", "Summenlast Netzverluste", "loss", None),
+    ("bitterfeld_slp_2024", "SLP-Summenlast", "profile_sum", None),
+):
+    CORPUS_SPECS.append(_extended_entry(
+        key, f"NG Bitterfeld-Wolfen - {title} 2024", title, level=level, kind=kind))
+
+# Waren: eleven previously unused columns already reside in the same official ZIP.
+WAREN_PATH = _p("waren_2026_03_27_LGL_Strom_2025_Waren.csv")
+WAREN_URL = "https://stadtwerke-waren.de/files_PDF/2026_03_27%20LGL%20Strom%202025%20Waren.zip"
+for key, col, title, kind, level in (
+    ("waren_entnahme_msns_2025", "Wert", "Hoechstentnahmelast MS/NS", "load", "MS/NS"),
+    ("waren_entnahme_ns_2025", "Wert.1", "Hoechstentnahmelast NS", "load", "NS"),
+    ("waren_einspeisung_ms_2025", "Wert.3", "Einspeisung MS", "generation", "MS"),
+    ("waren_einspeisung_msns_2025", "Wert.4", "Einspeisung MS/NS", "generation", "MS/NS"),
+    ("waren_einspeisung_ns_2025", "Wert.5", "Einspeisung NS", "generation", "NS"),
+    ("waren_slp_2025", "Wert.6", "Summenlast nicht leistungsgemessene Kunden", "profile_sum", None),
+    ("waren_netzverluste_2025", "Wert.7", "Summenlast Netzverluste", "loss", None),
+    ("waren_rlp_2025", "Wert.8", "Restlastkurve Lastprofilkunden", "residual", None),
+    ("waren_fahrplan_2025", "Wert.9", "Fahrplanprognose Lastprofilkunden", "forecast_sum", None),
+    ("waren_jhl_msns_2025", "Wert.11", "Lastverlauf Jahreshoechstlast MS/NS", "jhl", "MS/NS"),
+    ("waren_jhl_ns_2025", "Wert.12", "Lastverlauf Jahreshoechstlast NS", "jhl", "NS"),
+):
+    CORPUS_SPECS.append(_entry(
+        key, f"Stadtwerke Waren - {title} 2025", WAREN_PATH, col, "kW", "Stadtwerke Waren",
+        title, 2025, WAREN_URL, "Paragraph 23c Abs. 3 EnWG", level=level,
+        signed=kind == "residual", kind=kind, official_page=WAREN_PAGE,
+        source_archive=_p("waren_lgl_strom_2025_p23c.zip"),
+        include_in_benchmark=kind in {"load", "jhl"}, source_set="extended_2026_audit"))
+
+# TEN companion series.  Feed-in ZIPs carry separate generation, reverse-flow and
+# total columns; register the physically useful total while retaining raw components.
+CORPUS_SPECS.extend([
+    _extended_entry("ten_slp_2025", "TEN - SLP-Summenlast 2025", "SLP-Summenlast",
+                    kind="profile_sum"),
+    _extended_entry("ten_gesamtlast_2025", "TEN - Gesamtlast 2025", "Gesamtlast", kind="load"),
+])
+for level in ("hs", "hsu", "ms", "msu", "ns"):
+    label = level.upper()
+    CORPUS_SPECS.append(_extended_entry(
+        f"ten_einspeisung_{level}_2025", f"TEN - Einspeisung Summe {label} 2025",
+        f"Einspeisung Summe {label}", col="Wert Summe", level=label, kind="generation"))
+for quarter in range(1, 5):
+    CORPUS_SPECS.append(_extended_entry(
+        f"ten_dba_2025_q{quarter}", f"TEN - Differenzbilanzierung 2025 Q{quarter}",
+        f"Differenzbilanzierung Q{quarter}", kind="differenzbilanz", signed=True))
+
+# neu.sw companion series with a usable numeric column.  The empty MS/NS feed-in file
+# remains downloaded and recorded but is intentionally not promoted to the corpus.
+for key, title, kind, level in (
+    ("neusw_slp_2025", "SLP-Summenlast", "profile_sum", None),
+    ("neusw_netzverluste_summe_2025", "Summenlast Netzverluste", "loss", None),
+    ("neusw_fahrplan_ns_2025", "Fahrplanprognose NS", "forecast_sum", "NS"),
+    ("neusw_einspeisung_hsms_2025", "Einspeisung HS/MS", "generation", "HS/MS"),
+    ("neusw_einspeisung_ms_2025", "Einspeisung MS", "generation", "MS"),
+    ("neusw_einspeisung_ns_2025", "Einspeisung NS", "generation", "NS"),
+    ("neusw_verlustlastgang_2025", "Verlustlastgang", "loss", None),
+):
+    CORPUS_SPECS.append(_extended_entry(
+        key, f"neu.sw Neubrandenburg - {title} 2025", title,
+        col="Unnamed: 3", level=level, kind=kind))
+
+# Complete Passau 2025 machine-readable publication.
+for level in ("hsms", "ms", "msns", "ns"):
+    label = level.upper().replace("HSMS", "HS/MS").replace("MSNS", "MS/NS")
+    for prefix, title, kind in (
+        ("jhl", "Lastverlauf Jahreshoechstlast", "jhl"),
+        ("bezug", "Bezug vorgelagerte Ebene", "bezug"),
+        ("verlust", "Netzverlust", "loss"),
+    ):
+        CORPUS_SPECS.append(_extended_entry(
+            f"passau_{prefix}_{level}_2025", f"Stadtwerke Passau - {title} {label} 2025",
+            f"{title} {label}", level=label, kind=kind))
+for key, title, kind, signed in (
+    ("passau_summe_ms_2025", "Summenlast MS", "profile_sum", False),
+    ("passau_summe_msns_2025", "Summenlast MS/NS", "profile_sum", False),
+    ("passau_summe_ns_2025", "Summenlast NS", "profile_sum", False),
+    ("passau_summe_summe_nv_2025", "Summenlast Netzverluste", "loss", False),
+    ("passau_summe_summe_slp_2025", "SLP-Summenlast", "profile_sum", False),
+    ("passau_prognose_fp_2025", "Fahrplanprognose", "forecast_sum", False),
+    ("passau_prognose_rlk_2025", "Restlastkurve", "residual", True),
+    ("passau_einspeisung_ein_ms_2025", "Einspeisung MS", "generation", False),
+    ("passau_einspeisung_ein_msns_2025", "Einspeisung MS/NS", "generation", False),
+    ("passau_einspeisung_ein_ns_2025", "Einspeisung NS", "generation", False),
+):
+    CORPUS_SPECS.append(_extended_entry(
+        key, f"Stadtwerke Passau - {title} 2025", title, kind=kind, signed=signed))
+
+_keys = [entry["key"] for entry in CORPUS_SPECS]
+if len(_keys) != len(set(_keys)):
+    duplicates = sorted({key for key in _keys if _keys.count(key) > 1})
+    raise ValueError(f"Duplicate corpus keys: {duplicates}")
 
 
 def validate_entry(entry):
