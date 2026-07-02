@@ -1,5 +1,9 @@
 # NetzPilot
 
+<p align="center">
+  <img src="docs/assets/netzpilot-hero.png" alt="NetzPilot – Prognose und Steuerung für kommunale Energienetze" width="100%">
+</p>
+
 **Leakage-sichere Last-, Erzeugungs- und Residuallastprognose für kleine deutsche Stadtwerke — mit §14a-EnWG-Steuerung, Bilanzkreis-Ökonomie und operativem Cockpit.**
 
 > **Lizenz: GNU AGPL-3.0** (Open Source, Copyleft) — siehe [LICENSE](LICENSE). Eine **kommerzielle Lizenz** ohne AGPL-Pflichten ist auf Anfrage erhältlich, siehe [LICENSING.md](LICENSING.md).
@@ -9,6 +13,12 @@
 ## Was ist NetzPilot?
 
 NetzPilot erstellt **Day-ahead- und Mehrtages-Prognosen** (D+1…D+3) für die Netzlast kleiner deutscher Verteilnetzbetreiber — mit kalibrierten Unsicherheitsbändern (P10/P50/P90), streng leakage-sicher (rolling-origin, Pflicht-Baselines) und auf echten DSO-Lastgängen validiert. Darauf aufbauend liefert es die **§14a-EnWG-Steuerkette** (faire Abregelung, Re-Dispatch, zeitvariables Netzentgelt, VPP-Pool), die **Bilanzkreis-Ökonomie** (reBAP/Spot) und ein **bedienbares Cockpit**.
+
+<p align="center">
+  <img src="docs/assets/netzpilot-dashboard.png" alt="NetzPilot-Dashboard mit verifizierten Stadtwerke-Kennzahlen und Day-ahead-Prognose" width="100%">
+</p>
+
+<p align="center"><sub>Engine-Showcase mit verifizierten öffentlichen Stadtwerke-Daten; das operative Cockpit läuft unter <code>/cockpit</code>.</sub></p>
 
 ## Kernfunktionen
 
