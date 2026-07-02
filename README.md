@@ -18,7 +18,7 @@ NetzPilot erstellt **Day-ahead- und Mehrtages-Prognosen** (D+1…D+3) für die N
   <img src="docs/assets/netzpilot-dashboard.png" alt="NetzPilot-Dashboard mit verifizierten Stadtwerke-Kennzahlen und Day-ahead-Prognose" width="100%">
 </p>
 
-<p align="center"><sub>Engine-Showcase mit verifizierten öffentlichen Stadtwerke-Daten; das operative Cockpit läuft unter <code>/cockpit</code>.</sub></p>
+<p align="center"><sub>Operatives Cockpit der lokal laufenden FastAPI-Instanz mit geladenem Service-Lauf; erreichbar unter <code>/cockpit</code>.</sub></p>
 
 ## Kernfunktionen
 
