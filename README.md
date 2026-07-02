@@ -39,6 +39,23 @@ pip install -r requirements.txt
 python -m pytest -q
 ```
 
+**Öffentlichen DSO-Datenkorpus lokal aufbauen:**
+
+```powershell
+# Bisheriger deutscher Validierungskorpus
+python scripts\fetch_dso_corpus.py --set core
+
+# Zusätzliche Last-, Einspeise-, Verlust- und SLP-Reihen aus dem Quellen-Audit
+python scripts\fetch_dso_corpus.py --set extended
+
+# Registry nach dem Download validieren/neu erzeugen
+python scripts\build_corpus_index.py
+```
+
+Die Rohdaten werden unter `data_cache/real/` mit URL, Abrufzeit und SHA-256 im
+`download_manifest.json` abgelegt. Der Ordner bleibt bewusst gitignoriert: Die gesetzliche
+Veröffentlichung der Daten ist nicht automatisch eine Erlaubnis zur Weiterverteilung.
+
 **Konsolidierter Selbsttest** (alle Unit-/Leakage-/Integrationstests + UI-Harness):
 
 ```powershell
@@ -47,10 +64,15 @@ python scripts\run_all_checks.py
 
 ## Ergebnisse (Auszug)
 
-- Auf **46 echten DSO-Lastreihen** in **44 von 46** Fällen signifikant besser als die naive Vorwochen-Regel.
-- **Erstes echtes Stadtwerk** (Hilden SLP-Summenlast 2025): MAPE **1,76 %**, Skill **+34,0 %** vs. Saisonal-Naiv.
+- Öffentliche-Daten-Baseline vom **2. Juli 2026**: **76** nach Werte-Hash deduplizierte
+  Benchmark-Reihen, davon **74 von 76** signifikant besser als die naive Vorwochen-Regel;
+  medianer Skill **+23,1 %**. Mehrere Jahre und Spannungsebenen desselben Betreibers sind dabei
+  ausdrücklich **keine 76 unabhängigen Stadtwerke**.
+- **Stadtwerke Hilden Netzumsatz 2025:** MAPE **3,5 %**, Skill **+18,9 %** vs. Saisonal-Naiv.
 - **Nationale Last** (2-Jahres-Cache): MAPE **3,36 %**, Skill **+55,8 %** vs. Saisonal-Naiv.
 - **§14a-Re-Dispatch** (3 echte DSO-Reihen): im Mittel **74,3 % weniger Abregelenergie** als pauschale Dauerdimmung bei gehaltener Netzgrenze.
+
+➡️ Vollständige öffentliche Zusammenfassung mit Grenzen: **[PUBLIC_DATA_BENCHMARK.md](PUBLIC_DATA_BENCHMARK.md)**.
 
 ➡️ Vollständige Entwicklungs-Historie (T2–T44), alle Messwerte, Artefakt-Pfade und Methodik-Details: **[ENTWICKLUNG.md](ENTWICKLUNG.md)**.
 

@@ -14,7 +14,11 @@ def test_t28_corpus_index_counts_and_filters():
     corpus = json.loads(path.read_text(encoding="utf-8"))
     assert corpus["n_series"] >= 30
     assert 20 <= corpus["n_independent_networks"] <= corpus["n_series"]
-    assert corpus["n_correlation_redundant"] == corpus["n_series"] - corpus["n_independent_networks"]
+    # The extended public-data registry also contains generation, loss, SLP and
+    # settlement rows.  Correlation clustering intentionally covers measured load
+    # benchmark rows only, not every validated operational series.
+    n_benchmark = sum(1 for e in corpus["entries"] if e["include_in_benchmark"])
+    assert corpus["n_correlation_redundant"] == n_benchmark - corpus["n_independent_networks"]
     assert corpus["n_pool_series"] >= 30
     assert corpus["n_duplicates_excluded"] >= 1
     assert corpus["independence_method"]["correlation_threshold"] == 0.98
@@ -50,6 +54,8 @@ def test_dataset_manifest_uses_valid_corpus_entries():
     assert all(e["csv"].startswith("data_cache/real/") for e in MANIFEST)
     assert any(e.get("country") == "FR" and e.get("network_kind") == "dso_real" for e in MANIFEST)
     assert any(e.get("country") == "FR" and e.get("network_kind") == "tso_regional" for e in MANIFEST)
+    assert any(e.get("source_set") == "extended_2026_audit" for e in MANIFEST)
+    assert all(e.get("operator") and e.get("year") for e in MANIFEST)
     hashes = [e.get("value_hash") for e in MANIFEST]
     assert len(hashes) == len(set(hashes))
     assert sum(1 for e in MANIFEST if e.get("independent_network")) >= 20

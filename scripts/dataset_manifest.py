@@ -48,6 +48,11 @@ def load_manifest(path: str = CORPUS_INDEX):
             "col": e["col"],
             "unit": e.get("unit", "MW"),
             "level": e.get("level"),
+            "operator": e.get("operator"),
+            "series": e.get("series"),
+            "year": e.get("year"),
+            "kind": e.get("kind", "load"),
+            "source_set": e.get("source_set", "core"),
             "country": e.get("country", "DE"),
             "network_kind": e.get("network_kind", "dso_real"),
             "signed": e.get("signed", False),
@@ -59,6 +64,7 @@ def load_manifest(path: str = CORPUS_INDEX):
             "redundant_of": e.get("redundant_of"),
             "corr": e.get("corr"),
             "source_url": e.get("source_url"),
+            "official_page": e.get("official_page"),
         })
     return out
 
